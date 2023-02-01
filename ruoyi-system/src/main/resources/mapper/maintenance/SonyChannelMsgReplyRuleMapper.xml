@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.maintenance.mapper.SonyChannelMsgReplyRuleMapper">
+    
+    <resultMap type="SonyChannelMsgReplyRule" id="SonyChannelMsgReplyRuleResult">
+        <result property="ruleId"    column="rule_id"    />
+        <result property="ruleName"    column="rule_name"    />
+        <result property="replyType"    column="reply_type"    />
+        <result property="replyNum"    column="reply_num"    />
+        <result property="matchQrcode"    column="match_qrcode"    />
+        <result property="channelCode"    column="channel_code"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="updatedBy"    column="updated_by"    />
+    </resultMap>
+
+    <sql id="selectSonyChannelMsgReplyRuleVo">
+        select rule_id, rule_name, reply_type, reply_num, match_qrcode, channel_code, create_time, update_time, created_by, updated_by from sony_channel_msg_reply_rule
+    </sql>
+
+    <select id="selectSonyChannelMsgReplyRuleList" parameterType="SonyChannelMsgReplyRule" resultMap="SonyChannelMsgReplyRuleResult">
+        <include refid="selectSonyChannelMsgReplyRuleVo"/>
+        <where>  
+            <if test="ruleName != null  and ruleName != ''"> and rule_name like concat('%', #{ruleName}, '%')</if>
+            <if test="replyType != null "> and reply_type = #{replyType}</if>
+            <if test="replyNum != null "> and reply_num = #{replyNum}</if>
+            <if test="matchQrcode != null "> and match_qrcode = #{matchQrcode}</if>
+            <if test="channelCode != null  and channelCode != ''"> and channel_code = #{channelCode}</if>
+            <if test="createdBy != null  and createdBy != ''"> and created_by = #{createdBy}</if>
+            <if test="updatedBy != null  and updatedBy != ''"> and updated_by = #{updatedBy}</if>
+        </where>
+    </select>
+    
+    <select id="selectSonyChannelMsgReplyRuleByRuleId" parameterType="Long" resultMap="SonyChannelMsgReplyRuleResult">
+        <include refid="selectSonyChannelMsgReplyRuleVo"/>
+        where rule_id = #{ruleId}
+    </select>
+        
+    <insert id="insertSonyChannelMsgReplyRule" parameterType="SonyChannelMsgReplyRule" useGeneratedKeys="true" keyProperty="ruleId">
+        insert into sony_channel_msg_reply_rule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ruleName != null and ruleName != ''">rule_name,</if>
+            <if test="replyType != null">reply_type,</if>
+            <if test="replyNum != null">reply_num,</if>
+            <if test="matchQrcode != null">match_qrcode,</if>
+            <if test="channelCode != null">channel_code,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createdBy != null and createdBy != ''">created_by,</if>
+            <if test="updatedBy != null and updatedBy != ''">updated_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ruleName != null and ruleName != ''">#{ruleName},</if>
+            <if test="replyType != null">#{replyType},</if>
+            <if test="replyNum != null">#{replyNum},</if>
+            <if test="matchQrcode != null">#{matchQrcode},</if>
+            <if test="channelCode != null">#{channelCode},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createdBy != null and createdBy != ''">#{createdBy},</if>
+            <if test="updatedBy != null and updatedBy != ''">#{updatedBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSonyChannelMsgReplyRule" parameterType="SonyChannelMsgReplyRule">
+        update sony_channel_msg_reply_rule
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ruleName != null and ruleName != ''">rule_name = #{ruleName},</if>
+            <if test="replyType != null">reply_type = #{replyType},</if>
+            <if test="replyNum != null">reply_num = #{replyNum},</if>
+            <if test="matchQrcode != null">match_qrcode = #{matchQrcode},</if>
+            <if test="channelCode != null">channel_code = #{channelCode},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createdBy != null and createdBy != ''">created_by = #{createdBy},</if>
+            <if test="updatedBy != null and updatedBy != ''">updated_by = #{updatedBy},</if>
+        </trim>
+        where rule_id = #{ruleId}
+    </update>
+
+    <delete id="deleteSonyChannelMsgReplyRuleByRuleId" parameterType="Long">
+        delete from sony_channel_msg_reply_rule where rule_id = #{ruleId}
+    </delete>
+
+    <delete id="deleteSonyChannelMsgReplyRuleByRuleIds" parameterType="String">
+        delete from sony_channel_msg_reply_rule where rule_id in 
+        <foreach item="ruleId" collection="array" open="(" separator="," close=")">
+            #{ruleId}
+        </foreach>
+    </delete>
+</mapper>

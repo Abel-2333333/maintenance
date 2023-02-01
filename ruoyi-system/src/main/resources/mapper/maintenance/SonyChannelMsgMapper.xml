@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.maintenance.mapper.SonyChannelMsgMapper">
+    
+    <resultMap type="SonyChannelMsg" id="SonyChannelMsgResult">
+        <result property="id"    column="id"    />
+        <result property="ruleId"    column="rule_id"    />
+        <result property="msgType"    column="msg_type"    />
+        <result property="content"    column="content"    />
+        <result property="createdTime"    column="created_time"    />
+        <result property="updatedTime"    column="updated_time"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="updatedBy"    column="updated_by"    />
+    </resultMap>
+
+    <sql id="selectSonyChannelMsgVo">
+        select id, rule_id, msg_type, content, created_time, updated_time, created_by, updated_by from sony_channel_msg
+    </sql>
+
+    <select id="selectSonyChannelMsgList" parameterType="SonyChannelMsg" resultMap="SonyChannelMsgResult">
+        <include refid="selectSonyChannelMsgVo"/>
+        <where>  
+            <if test="ruleId != null "> and rule_id = #{ruleId}</if>
+            <if test="msgType != null "> and msg_type = #{msgType}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="createdTime != null "> and created_time = #{createdTime}</if>
+            <if test="updatedTime != null "> and updated_time = #{updatedTime}</if>
+            <if test="createdBy != null  and createdBy != ''"> and created_by = #{createdBy}</if>
+            <if test="updatedBy != null  and updatedBy != ''"> and updated_by = #{updatedBy}</if>
+        </where>
+    </select>
+    
+    <select id="selectSonyChannelMsgById" parameterType="Long" resultMap="SonyChannelMsgResult">
+        <include refid="selectSonyChannelMsgVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSonyChannelMsg" parameterType="SonyChannelMsg" useGeneratedKeys="true" keyProperty="id">
+        insert into sony_channel_msg
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ruleId != null">rule_id,</if>
+            <if test="msgType != null">msg_type,</if>
+            <if test="content != null">content,</if>
+            <if test="createdTime != null">created_time,</if>
+            <if test="updatedTime != null">updated_time,</if>
+            <if test="createdBy != null and createdBy != ''">created_by,</if>
+            <if test="updatedBy != null and updatedBy != ''">updated_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ruleId != null">#{ruleId},</if>
+            <if test="msgType != null">#{msgType},</if>
+            <if test="content != null">#{content},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updatedTime != null">#{updatedTime},</if>
+            <if test="createdBy != null and createdBy != ''">#{createdBy},</if>
+            <if test="updatedBy != null and updatedBy != ''">#{updatedBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSonyChannelMsg" parameterType="SonyChannelMsg">
+        update sony_channel_msg
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ruleId != null">rule_id = #{ruleId},</if>
+            <if test="msgType != null">msg_type = #{msgType},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="createdTime != null">created_time = #{createdTime},</if>
+            <if test="updatedTime != null">updated_time = #{updatedTime},</if>
+            <if test="createdBy != null and createdBy != ''">created_by = #{createdBy},</if>
+            <if test="updatedBy != null and updatedBy != ''">updated_by = #{updatedBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSonyChannelMsgById" parameterType="Long">
+        delete from sony_channel_msg where id = #{id}
+    </delete>
+
+    <delete id="deleteSonyChannelMsgByIds" parameterType="String">
+        delete from sony_channel_msg where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

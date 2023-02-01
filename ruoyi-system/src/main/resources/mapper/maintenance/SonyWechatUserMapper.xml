@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.maintenance.mapper.SonyWechatUserMapper">
+    
+    <resultMap type="SonyWechatUser" id="SonyWechatUserResult">
+        <result property="id"    column="id"    />
+        <result property="openId"    column="open_id"    />
+        <result property="unionId"    column="union_id"    />
+        <result property="bpId"    column="bp_id"    />
+        <result property="nickname"    column="nickname"    />
+        <result property="gender"    column="gender"    />
+        <result property="language"    column="language"    />
+        <result property="country"    column="country"    />
+        <result property="province"    column="province"    />
+        <result property="city"    column="city"    />
+        <result property="avatarUrl"    column="avatar_url"    />
+        <result property="subscribeStatus"    column="subscribe_status"    />
+        <result property="subscribeScene"    column="subscribe_scene"    />
+        <result property="subscribeTime"    column="subscribe_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="groupId"    column="group_id"    />
+        <result property="qrScene"    column="qr_scene"    />
+        <result property="qrSceneStr"    column="qr_scene_str"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSonyWechatUserVo">
+        select id, open_id, union_id, bp_id, nickname, gender, language, country, province, city, avatar_url, subscribe_status, subscribe_scene, subscribe_time, remark, group_id, qr_scene, qr_scene_str, create_time, update_time from sony_wechat_user
+    </sql>
+
+    <select id="selectSonyWechatUserList" parameterType="SonyWechatUser" resultMap="SonyWechatUserResult">
+        <include refid="selectSonyWechatUserVo"/>
+        <where>  
+            <if test="openId != null  and openId != ''"> and open_id = #{openId}</if>
+            <if test="unionId != null  and unionId != ''"> and union_id = #{unionId}</if>
+            <if test="bpId != null  and bpId != ''"> and bp_id = #{bpId}</if>
+            <if test="nickname != null  and nickname != ''"> and nickname like concat('%', #{nickname}, '%')</if>
+            <if test="gender != null "> and gender = #{gender}</if>
+            <if test="language != null  and language != ''"> and language = #{language}</if>
+            <if test="country != null  and country != ''"> and country = #{country}</if>
+            <if test="province != null  and province != ''"> and province = #{province}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="avatarUrl != null  and avatarUrl != ''"> and avatar_url = #{avatarUrl}</if>
+            <if test="subscribeStatus != null "> and subscribe_status = #{subscribeStatus}</if>
+            <if test="subscribeScene != null  and subscribeScene != ''"> and subscribe_scene = #{subscribeScene}</if>
+            <if test="subscribeTime != null "> and subscribe_time = #{subscribeTime}</if>
+            <if test="groupId != null "> and group_id = #{groupId}</if>
+            <if test="qrScene != null "> and qr_scene = #{qrScene}</if>
+            <if test="qrSceneStr != null  and qrSceneStr != ''"> and qr_scene_str = #{qrSceneStr}</if>
+        </where>
+    </select>
+    
+    <select id="selectSonyWechatUserById" parameterType="Long" resultMap="SonyWechatUserResult">
+        <include refid="selectSonyWechatUserVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSonyWechatUser" parameterType="SonyWechatUser" useGeneratedKeys="true" keyProperty="id">
+        insert into sony_wechat_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="openId != null and openId != ''">open_id,</if>
+            <if test="unionId != null">union_id,</if>
+            <if test="bpId != null">bp_id,</if>
+            <if test="nickname != null">nickname,</if>
+            <if test="gender != null">gender,</if>
+            <if test="language != null and language != ''">language,</if>
+            <if test="country != null">country,</if>
+            <if test="province != null">province,</if>
+            <if test="city != null">city,</if>
+            <if test="avatarUrl != null">avatar_url,</if>
+            <if test="subscribeStatus != null">subscribe_status,</if>
+            <if test="subscribeScene != null and subscribeScene != ''">subscribe_scene,</if>
+            <if test="subscribeTime != null">subscribe_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="groupId != null">group_id,</if>
+            <if test="qrScene != null">qr_scene,</if>
+            <if test="qrSceneStr != null">qr_scene_str,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openId != null and openId != ''">#{openId},</if>
+            <if test="unionId != null">#{unionId},</if>
+            <if test="bpId != null">#{bpId},</if>
+            <if test="nickname != null">#{nickname},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="language != null and language != ''">#{language},</if>
+            <if test="country != null">#{country},</if>
+            <if test="province != null">#{province},</if>
+            <if test="city != null">#{city},</if>
+            <if test="avatarUrl != null">#{avatarUrl},</if>
+            <if test="subscribeStatus != null">#{subscribeStatus},</if>
+            <if test="subscribeScene != null and subscribeScene != ''">#{subscribeScene},</if>
+            <if test="subscribeTime != null">#{subscribeTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="groupId != null">#{groupId},</if>
+            <if test="qrScene != null">#{qrScene},</if>
+            <if test="qrSceneStr != null">#{qrSceneStr},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSonyWechatUser" parameterType="SonyWechatUser">
+        update sony_wechat_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="openId != null and openId != ''">open_id = #{openId},</if>
+            <if test="unionId != null">union_id = #{unionId},</if>
+            <if test="bpId != null">bp_id = #{bpId},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="language != null and language != ''">language = #{language},</if>
+            <if test="country != null">country = #{country},</if>
+            <if test="province != null">province = #{province},</if>
+            <if test="city != null">city = #{city},</if>
+            <if test="avatarUrl != null">avatar_url = #{avatarUrl},</if>
+            <if test="subscribeStatus != null">subscribe_status = #{subscribeStatus},</if>
+            <if test="subscribeScene != null and subscribeScene != ''">subscribe_scene = #{subscribeScene},</if>
+            <if test="subscribeTime != null">subscribe_time = #{subscribeTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="groupId != null">group_id = #{groupId},</if>
+            <if test="qrScene != null">qr_scene = #{qrScene},</if>
+            <if test="qrSceneStr != null">qr_scene_str = #{qrSceneStr},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSonyWechatUserById" parameterType="Long">
+        delete from sony_wechat_user where id = #{id}
+    </delete>
+
+    <delete id="deleteSonyWechatUserByIds" parameterType="String">
+        delete from sony_wechat_user where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

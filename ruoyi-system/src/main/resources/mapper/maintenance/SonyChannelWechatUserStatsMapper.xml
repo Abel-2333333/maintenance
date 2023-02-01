@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.maintenance.mapper.SonyChannelWechatUserStatsMapper">
+    
+    <resultMap type="SonyChannelWechatUserStats" id="SonyChannelWechatUserStatsResult">
+        <result property="id"    column="id"    />
+        <result property="userSource"    column="user_source"    />
+        <result property="newUser"    column="new_user"    />
+        <result property="unsubscribedUser"    column="unsubscribed_user"    />
+        <result property="netNewUser"    column="net_new_user"    />
+        <result property="totalUser"    column="total_user"    />
+        <result property="statsDate"    column="stats_date"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSonyChannelWechatUserStatsVo">
+        select id, user_source, new_user, unsubscribed_user, net_new_user, total_user, stats_date, update_time from sony_channel_wechat_user_stats
+    </sql>
+
+    <select id="selectSonyChannelWechatUserStatsList" parameterType="SonyChannelWechatUserStats" resultMap="SonyChannelWechatUserStatsResult">
+        <include refid="selectSonyChannelWechatUserStatsVo"/>
+        <where>  
+            <if test="userSource != null  and userSource != ''"> and user_source = #{userSource}</if>
+            <if test="newUser != null "> and new_user = #{newUser}</if>
+            <if test="unsubscribedUser != null "> and unsubscribed_user = #{unsubscribedUser}</if>
+            <if test="netNewUser != null "> and net_new_user = #{netNewUser}</if>
+            <if test="totalUser != null "> and total_user = #{totalUser}</if>
+            <if test="statsDate != null "> and stats_date = #{statsDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectSonyChannelWechatUserStatsById" parameterType="Long" resultMap="SonyChannelWechatUserStatsResult">
+        <include refid="selectSonyChannelWechatUserStatsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSonyChannelWechatUserStats" parameterType="SonyChannelWechatUserStats" useGeneratedKeys="true" keyProperty="id">
+        insert into sony_channel_wechat_user_stats
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userSource != null and userSource != ''">user_source,</if>
+            <if test="newUser != null">new_user,</if>
+            <if test="unsubscribedUser != null">unsubscribed_user,</if>
+            <if test="netNewUser != null">net_new_user,</if>
+            <if test="totalUser != null">total_user,</if>
+            <if test="statsDate != null">stats_date,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userSource != null and userSource != ''">#{userSource},</if>
+            <if test="newUser != null">#{newUser},</if>
+            <if test="unsubscribedUser != null">#{unsubscribedUser},</if>
+            <if test="netNewUser != null">#{netNewUser},</if>
+            <if test="totalUser != null">#{totalUser},</if>
+            <if test="statsDate != null">#{statsDate},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSonyChannelWechatUserStats" parameterType="SonyChannelWechatUserStats">
+        update sony_channel_wechat_user_stats
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userSource != null and userSource != ''">user_source = #{userSource},</if>
+            <if test="newUser != null">new_user = #{newUser},</if>
+            <if test="unsubscribedUser != null">unsubscribed_user = #{unsubscribedUser},</if>
+            <if test="netNewUser != null">net_new_user = #{netNewUser},</if>
+            <if test="totalUser != null">total_user = #{totalUser},</if>
+            <if test="statsDate != null">stats_date = #{statsDate},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSonyChannelWechatUserStatsById" parameterType="Long">
+        delete from sony_channel_wechat_user_stats where id = #{id}
+    </delete>
+
+    <delete id="deleteSonyChannelWechatUserStatsByIds" parameterType="String">
+        delete from sony_channel_wechat_user_stats where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
