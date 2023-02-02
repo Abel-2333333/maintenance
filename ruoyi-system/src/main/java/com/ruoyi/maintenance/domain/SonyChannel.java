@@ -58,6 +58,10 @@ public class SonyChannel extends BaseEntity
     @Excel(name = "微信生成的二维码跳转的url")
     private String qrcodeUrl;
 
+
+    @Excel(name= "备注")
+    private String remark;
+
     /**  */
     @Excel(name = "")
     private String createdBy;

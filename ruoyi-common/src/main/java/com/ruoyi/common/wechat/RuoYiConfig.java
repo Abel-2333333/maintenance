@@ -1,4 +1,4 @@
-package com.ruoyi.common.config;
+package com.ruoyi.common.wechat;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

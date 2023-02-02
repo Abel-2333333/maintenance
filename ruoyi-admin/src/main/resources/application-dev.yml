@@ -9,7 +9,7 @@ ruoyi:
   # 实例演示开关
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-  profile: /home/sony/maintenance/uploadPath
+  profile: /home/sony/maintenance/qrcode/upload/
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
@@ -127,3 +127,15 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*,/maintenance/**
+
+# 微信参数配置
+wx:
+  mp:
+    useRedis: true
+    redisConfig:
+      host: 54.204.37.108
+      port: 5556
+    configs:
+      - appId: wx02ff799649a9db7b # 第一个公众号的appid
+        token: FhOz6rHQ8LkmLc7IY9Z # 接口配置里的Token值
+        aesKey: 4s3YUFlsZe3jVfMLPO4KqKZhkiip4ZmHqRQZQoZSlH7 # 接口配置里的EncodingAESKey值

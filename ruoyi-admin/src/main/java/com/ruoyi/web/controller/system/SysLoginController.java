@@ -17,6 +17,8 @@ import com.ruoyi.framework.web.service.SysLoginService;
 import com.ruoyi.framework.web.service.SysPermissionService;
 import com.ruoyi.system.service.ISysMenuService;
 
+import javax.validation.Valid;
+
 /**
  * 登录验证
  * 
@@ -41,7 +43,7 @@ public class SysLoginController
      * @return 结果
      */
     @PostMapping("maintenance/login")
-    public AjaxResult login(@RequestBody LoginBody loginBody)
+    public AjaxResult login(@RequestBody @Valid LoginBody loginBody)
     {
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌

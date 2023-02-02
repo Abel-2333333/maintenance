@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,6 +15,9 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.exception.DemoModeException;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 全局异常处理器
@@ -98,9 +102,17 @@ public class GlobalExceptionHandler
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Object handleMethodArgumentNotValidException(MethodArgumentNotValidException e)
     {
-        log.error(e.getMessage(), e);
-        String message = e.getBindingResult().getFieldError().getDefaultMessage();
-        return AjaxResult.error(message);
+        List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
+        StringBuilder builder = new StringBuilder();
+        ArrayList<String> fields = new ArrayList<>();
+        fieldErrors.forEach(fieldError -> {
+            String defaultMessage = fieldError.getDefaultMessage();
+            builder.append(defaultMessage).append(". ");
+            fields.add(fieldError.getField());
+        });
+        String fieldsStr = String.join(", ", fields);
+        log.error("MethodArgumentNotValidException encountered for fields: {}", fieldsStr, e);
+        return AjaxResult.error(builder.toString());
     }
 
     /**

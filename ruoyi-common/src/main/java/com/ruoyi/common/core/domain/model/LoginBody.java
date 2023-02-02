@@ -1,5 +1,7 @@
 package com.ruoyi.common.core.domain.model;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 用户登录对象
  * 
@@ -10,11 +12,13 @@ public class LoginBody
     /**
      * 用户名
      */
+    @NotNull(message = "username不能为空")
     private String username;
 
     /**
      * 用户密码
      */
+   @NotNull(message = "password不能为空")
     private String password;
 
     /**
