@@ -70,7 +70,7 @@ spring:
     # 地址
     host: 54.204.37.108
     # 端口，默认为6379
-    port: 6379
+    port: 5556
     # 数据库索引
     database: 0
     # 密码
@@ -126,4 +126,4 @@ xss:
   # 排除链接（多个用逗号分隔）
   excludes: /system/notice
   # 匹配链接
-  urlPatterns: /system/*,/monitor/*,/tool/*, /maintenance/**
+  urlPatterns: /system/*,/monitor/*,/tool/*,/maintenance/**
