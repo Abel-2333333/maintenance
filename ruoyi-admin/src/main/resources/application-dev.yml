@@ -1,7 +1,7 @@
 # 项目相关配置
 ruoyi:
   # 名称
-  name: sony_maintenance
+  name: sony-maintenance
   # 版本
   version: 3.8.5
   # 版权年份
@@ -38,12 +38,6 @@ logging:
   level:
     com.ruoyi: debug
     org.springframework: warn
-  pattern:
-    console: %d{yyyy/MM/dd-HH:mm:ss} [%thread] %-5level %logger- %msg%n
-    file: %d{yyyy/MM/dd-HH:mm} [%thread] %-5level %logger- %msg%n
-  file:
-    path: /data/log/maintenance/
-    name: project.log
 
 # 用户配置
 user:
@@ -76,7 +70,7 @@ spring:
     # 地址
     host: 54.204.37.108
     # 端口，默认为6379
-    port: 5555
+    port: 6379
     # 数据库索引
     database: 0
     # 密码
@@ -132,4 +126,4 @@ xss:
   # 排除链接（多个用逗号分隔）
   excludes: /system/notice
   # 匹配链接
-  urlPatterns: /system/*,/monitor/*,/tool/*
+  urlPatterns: /system/*,/monitor/*,/tool/*, /maintenance/**

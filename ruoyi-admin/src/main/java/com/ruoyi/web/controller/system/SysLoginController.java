@@ -40,7 +40,7 @@ public class SysLoginController
      * @param loginBody 登录信息
      * @return 结果
      */
-    @PostMapping("/login")
+    @PostMapping("maintenance/login")
     public AjaxResult login(@RequestBody LoginBody loginBody)
     {
         AjaxResult ajax = AjaxResult.success();

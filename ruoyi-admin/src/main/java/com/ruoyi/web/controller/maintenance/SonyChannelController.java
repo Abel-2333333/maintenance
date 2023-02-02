@@ -6,6 +6,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.maintenance.domain.SonyChannel;
 import com.ruoyi.maintenance.service.ISonyChannelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class SonyChannelController extends BaseController
     @PostMapping("/add")
     public AjaxResult add(@RequestBody SonyChannel sonyChannel)
     {
-        sonyChannel.setChannelCode("ABC123");
+        sonyChannel.setChannelCode(IdUtils.fastSimpleUUID());
         sonyChannel.setCreatedBy(getUsername());
         return toAjax(sonyChannelService.insertSonyChannel(sonyChannel));
     }

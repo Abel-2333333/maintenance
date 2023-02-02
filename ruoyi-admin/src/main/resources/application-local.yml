@@ -1,7 +1,7 @@
 # 项目相关配置
 ruoyi:
   # 名称
-  name: RuoYi
+  name: sony-maintenance
   # 版本
   version: 3.8.5
   # 版权年份
@@ -38,11 +38,6 @@ logging:
   level:
     com.ruoyi: debug
     org.springframework: warn
-  pattern:
-    console: "%d{yyyy/MM/dd-HH:mm:ss} [%thread] %-5level %logger- %msg%n"
-    file: "%d{yyyy/MM/dd-HH:mm} [%thread] %-5level %logger- %msg%n"
-  file:
-    path: D:\projects\ruoyi\log\
 
 # 用户配置
 user:
