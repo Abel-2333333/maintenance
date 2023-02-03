@@ -9,7 +9,8 @@ ruoyi:
   # 实例演示开关
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-  profile: E:\projects\isoft\code\maintenance\qrcode
+  profile: D:\projects\ruoyi\pictures
+#  profile: E:\projects\isoft\code\maintenance\qrcode
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
@@ -139,3 +140,4 @@ wx:
       - appId: wx02ff799649a9db7b # 第一个公众号的appid
         token: FhOz6rHQ8LkmLc7IY9Z # 接口配置里的Token值
         aesKey: 4s3YUFlsZe3jVfMLPO4KqKZhkiip4ZmHqRQZQoZSlH7 # 接口配置里的EncodingAESKey值
+        secret: 85362b8cd0bfe7dd30565bddda95e793    # 微信后台基本配置的密钥

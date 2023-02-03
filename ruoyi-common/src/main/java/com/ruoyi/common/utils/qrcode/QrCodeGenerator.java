@@ -8,11 +8,11 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
 import java.util.Hashtable;
 
 import static org.springframework.data.redis.core.convert.Bucket.CHARSET;
@@ -37,33 +37,53 @@ public class QrCodeGenerator {
 
     public static int DEFAULT_WIDTH = 645;
     public static int DEFAULT_HEIGHT = 645;
-
-    /**
-     * 生成二维码, 写到指定路径
-     *
-     * @param content 二维码内容
-     * @param width   二维码宽度
-     * @param height  二维码高度
-     * @param path    存放路径
-     * @throws
-     */
-    public static BufferedImage generateQRCode(String content, int width, int height) throws WriterException {
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        Hashtable<EncodeHintType, Object> hints = new Hashtable<>();
-        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-        hints.put(EncodeHintType.CHARACTER_SET, CHARSET);
-        hints.put(EncodeHintType.MARGIN, 1);
-        BitMatrix bitMatrix = qrCodeWriter.encode(content, BarcodeFormat.QR_CODE, width, height, hints);
-        return MatrixToImageWriter.toBufferedImage(bitMatrix);
-    }
-
+    
     /**
      * 生成默认大小的渠道码
      * @param content 二维码内容
      * @param path 存放路径
      */
-    public static BufferedImage generateQRCode(String content) throws WriterException {
-        return generateQRCode(content, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    public static BufferedImage generateQRCodeImage(String content) throws WriterException {
+        return generateQRCodeImage(content, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    }
+
+    /**
+     * 生成二维码
+     *
+     * @param content 二维码内容
+     * @param width   二维码宽度
+     * @param height  二维码高度
+     * @throws WriterException 获取QRCodeWriter异常
+     */
+    public static BufferedImage generateQRCodeImage(String content, int width, int height) throws WriterException {
+        BitMatrix bitMatrix = getBitMatrix(content, width, height);
+        return MatrixToImageWriter.toBufferedImage(bitMatrix);
+    }
+    
+    public static void uploadQRCodeImage(String content, String filePath) throws WriterException, IOException {
+        uploadQRCodeImage(content, DEFAULT_WIDTH, DEFAULT_HEIGHT, filePath);
+    }
+    
+    public static void uploadQRCodeImage(String content, int width, int height, String file) throws WriterException, IOException {
+        BufferedImage qrCode = generateQRCodeImage(content, width, height);
+        ImageIO.write(qrCode, QrCodeGenerator.IMAGE_TYPE_PNG, new File(file));
+    }
+    
+    /**
+     * 生成位图
+     * @param content 二维码内容
+     * @param width   二维码宽度
+     * @param height  二维码高度
+     * @return 位图
+     * @throws WriterException 获取QRCodeWriter异常
+     */
+    private static BitMatrix getBitMatrix(String content, int width, int height) throws WriterException {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        Hashtable<EncodeHintType, Object> hints = new Hashtable<>();
+        hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+        hints.put(EncodeHintType.CHARACTER_SET, CHARSET);
+        hints.put(EncodeHintType.MARGIN, 1);
+        return qrCodeWriter.encode(content, BarcodeFormat.QR_CODE, width, height, hints);
     }
 
     /**
@@ -76,14 +96,13 @@ public class QrCodeGenerator {
      * @throws WriterException QRCodeWriter异常
      * @throws IOException     MatrixToImageWriter写成steam流会抛的异常
      */
-    public static byte[] getQRCodeImage(String content, int width, int height) throws WriterException, IOException {
-        QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(content, BarcodeFormat.QR_CODE, width, height);
+    public static byte[] generateQRCodeStream(String content, int width, int height) throws WriterException, IOException {
+        BitMatrix bitMatrix = getBitMatrix(content, width, height);
 
         ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
         MatrixToImageWriter.writeToStream(bitMatrix, IMAGE_TYPE_PNG, pngOutputStream);
         return pngOutputStream.toByteArray();
     }
-
-
+    
+    
 }

@@ -3,7 +3,7 @@ package com.ruoyi.common.wechat.config;
 import com.ruoyi.common.wechat.handler.*;
 import lombok.AllArgsConstructor;
 import me.chanjar.weixin.common.api.WxConsts;
-import me.chanjar.weixin.common.redis.JedisWxRedisOps;
+import me.chanjar.weixin.common.redis.RedisTemplateWxRedisOps;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
@@ -12,9 +12,7 @@ import me.chanjar.weixin.mp.config.impl.WxMpRedisConfigImpl;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-
+import org.springframework.data.redis.core.StringRedisTemplate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +47,8 @@ public class WxMpConfiguration {
     private final NullHandler nullHandler;
 
     private final StoreCheckNotifyHandler storeCheckNotifyHandler;
+    
+    private final StringRedisTemplate redisTemplate;
 
     @Bean
     public WxMpService wxMpService() {
@@ -58,11 +58,7 @@ public class WxMpConfiguration {
                 .stream().map(a -> {
                     WxMpDefaultConfigImpl configStorage;
                     if (this.properties.isUseRedis()) {
-                        final WxMpProperties.RedisConfig redisConfig = this.properties.getRedisConfig();
-                        JedisPoolConfig poolConfig = new JedisPoolConfig();
-                        JedisPool jedisPool = new JedisPool(poolConfig, redisConfig.getHost(), redisConfig.getPort(),
-                                redisConfig.getTimeout(), redisConfig.getPassword());
-                        configStorage = new WxMpRedisConfigImpl(new JedisWxRedisOps(jedisPool), a.getAppId());
+                        configStorage = new WxMpRedisConfigImpl(new RedisTemplateWxRedisOps(redisTemplate), a.getAppId());
                     } else {
                         configStorage = new WxMpDefaultConfigImpl();
                     }

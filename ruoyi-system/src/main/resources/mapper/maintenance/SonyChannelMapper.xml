@@ -50,7 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
         
-    <insert id="insertSonyChannel" parameterType="SonyChannel">
+    <insert id="insertSonyChannel" useGeneratedKeys="true" keyProperty="id" parameterType="SonyChannel">
         insert into sony_channel
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
