@@ -8,7 +8,7 @@ import java.util.List;
  * 渠道信息Mapper接口
  * 
  * @author Abel
- * @date 2023-02-01
+ * @date 2023-02-03
  */
 public interface SonyChannelMapper 
 {

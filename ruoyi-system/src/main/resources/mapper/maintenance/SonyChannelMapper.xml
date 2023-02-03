@@ -17,6 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="storeCode"    column="store_code"    />
         <result property="remark"    column="remark"    />
         <result property="qrcodeUrl"    column="qrcode_url"    />
+        <result property="delFlag"    column="del_flag"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="createdBy"    column="created_by"    />
@@ -24,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSonyChannelVo">
-        select id, primary_channel, secondary_channel, channel_code, province, city, maintenance_station_name, maintenance_station_code, store_name, store_code, remark, qrcode_url, create_time, update_time, created_by, updated_by from sony_channel
+        select id, primary_channel, secondary_channel, channel_code, province, city, maintenance_station_name, maintenance_station_code, store_name, store_code, remark, qrcode_url, del_flag, create_time, update_time, created_by, updated_by from sony_channel
     </sql>
 
     <select id="selectSonyChannelList" parameterType="SonyChannel" resultMap="SonyChannelResult">
@@ -49,7 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSonyChannelVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertSonyChannel" useGeneratedKeys="true" keyProperty="id" parameterType="SonyChannel">
         insert into sony_channel
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -65,6 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="storeCode != null and storeCode != ''">store_code,</if>
             <if test="remark != null">remark,</if>
             <if test="qrcodeUrl != null">qrcode_url,</if>
+            <if test="delFlag != null">del_flag,</if>
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="createdBy != null">created_by,</if>
@@ -83,6 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="storeCode != null and storeCode != ''">#{storeCode},</if>
             <if test="remark != null">#{remark},</if>
             <if test="qrcodeUrl != null">#{qrcodeUrl},</if>
+            <if test="delFlag != null">#{delFlag},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="createdBy != null">#{createdBy},</if>
@@ -104,6 +107,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="storeCode != null and storeCode != ''">store_code = #{storeCode},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="qrcodeUrl != null">qrcode_url = #{qrcodeUrl},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="createdBy != null">created_by = #{createdBy},</if>

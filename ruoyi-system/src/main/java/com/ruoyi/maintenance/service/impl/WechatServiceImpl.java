@@ -1,7 +1,11 @@
 package com.ruoyi.maintenance.service.impl;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.ruoyi.common.wechat.config.WxMpProperties;
 import com.ruoyi.common.wechat.util.JsonUtils;
 import com.ruoyi.common.wechat.util.WechatUtil;
+import com.ruoyi.maintenance.domain.EphemeralSceneBody;
 import com.ruoyi.maintenance.domain.SceneBody;
 import com.ruoyi.maintenance.service.IWechatService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +28,12 @@ import java.util.Map;
 public class WechatServiceImpl implements IWechatService {
 	@Resource
 	private WxMpService wxMpService;
+
+	@Resource
+	private IWechatService wechatService;
+
+	@Resource
+	private WxMpProperties wxMpProperties;
 	
 	/**
 	 * 调微信接口获取生成二维码必需的ticket及url
@@ -33,31 +43,10 @@ public class WechatServiceImpl implements IWechatService {
 	 */
 	@Override
 	public String getQrCodeUrl(Integer id) throws WxErrorException {
-		SceneBody sceneBody = getSceneBody(id);
+		boolean ephemeral = wxMpProperties.isEphemeral();
+		SceneBody<String> sceneBody = wechatService.getSceneBody(id, ephemeral);
 		String accessToken = wxMpService.getAccessToken();
-		return WechatUtil.getQRCodeUrl(accessToken, JsonUtils.toJson(sceneBody));
+		return WechatUtil.getQRCodeUrl(accessToken, JSON.toJSONString(sceneBody));
 	}
-	
-	
-	/**
-	 * 生成场景值请求体
-	 * @param ids 渠道id. 跳转公众号要携带的场景值id
-	 */
-	public SceneBody getSceneBody(List<String> ids) {
-		// 设置二维码字符串场景值
-		SceneBody sceneBody = new SceneBody();
-		Map<String, String> sceneStr = new HashMap<>();
-		// 拼接渠道id作为场景值
-		sceneStr.put(WechatUtil.ACTION_INFO_SCENE_STR, String.join(",", ids));
-		HashMap<String, Map<String, ?>> actionInfo = new HashMap<>();
-		actionInfo.put(WechatUtil.ACTION_INFO_SCENE, sceneStr);
-		
-		sceneBody.setActionName(WechatUtil.ACTION_NAME_SCENE_STR);
-		sceneBody.setActionInfo(actionInfo);
-		return sceneBody;
-	}
-	
-	public SceneBody getSceneBody(Integer id) {
-		return getSceneBody(Collections.singletonList(id.toString()));
-	}
+
 }

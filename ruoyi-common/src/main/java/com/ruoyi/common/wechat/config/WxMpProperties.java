@@ -23,6 +23,11 @@ public class WxMpProperties {
          */
         private RedisConfig redisConfig;
 
+        /**
+         * 是否临时二维码
+         */
+        private boolean ephemeral;
+
         @Data
         public static class RedisConfig {
                 /**

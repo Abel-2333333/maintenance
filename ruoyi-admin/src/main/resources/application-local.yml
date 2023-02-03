@@ -9,8 +9,8 @@ ruoyi:
   # 实例演示开关
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-  profile: D:\projects\ruoyi\pictures
-#  profile: E:\projects\isoft\code\maintenance\qrcode
+#  profile: D:\projects\ruoyi\pictures
+  profile: E:\projects\isoft\code\maintenance\qrcode
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
@@ -136,6 +136,7 @@ wx:
     redisConfig:
       host: 127.0.0.1
       port: 6379
+    ephemeral: true
     configs:
       - appId: wx02ff799649a9db7b # 第一个公众号的appid
         token: FhOz6rHQ8LkmLc7IY9Z # 接口配置里的Token值

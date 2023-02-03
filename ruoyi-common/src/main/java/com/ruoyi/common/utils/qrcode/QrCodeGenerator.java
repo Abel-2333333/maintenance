@@ -59,7 +59,12 @@ public class QrCodeGenerator {
         BitMatrix bitMatrix = getBitMatrix(content, width, height);
         return MatrixToImageWriter.toBufferedImage(bitMatrix);
     }
-    
+
+    /**
+     * @param content 二维码内容
+     * @param filePath 图片路径
+     * @throws WriterException 获取QRCodeWriter异常
+     */
     public static void uploadQRCodeImage(String content, String filePath) throws WriterException, IOException {
         uploadQRCodeImage(content, DEFAULT_WIDTH, DEFAULT_HEIGHT, filePath);
     }
