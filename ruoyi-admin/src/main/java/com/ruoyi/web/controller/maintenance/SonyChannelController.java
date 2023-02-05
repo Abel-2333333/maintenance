@@ -3,7 +3,6 @@ package com.ruoyi.web.controller.maintenance;
 import cn.hutool.core.date.DateUtil;
 import com.google.zxing.WriterException;
 import com.ruoyi.common.annotation.Log;
-import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -11,22 +10,27 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.exception.ServiceException;
-import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.common.utils.qrcode.QrCodeGenerator;
+import com.ruoyi.common.wechat.util.FileUtils;
 import com.ruoyi.common.wechat.util.RedisUtils;
 import com.ruoyi.maintenance.domain.SonyChannel;
+import com.ruoyi.maintenance.domain.dto.SonyChannelDTO;
+import com.ruoyi.maintenance.domain.excel.SonyChannelExcelVO;
+import com.ruoyi.maintenance.service.IQrCodeService;
 import com.ruoyi.maintenance.service.ISonyChannelService;
 import com.ruoyi.maintenance.service.IWechatService;
 import lombok.RequiredArgsConstructor;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 渠道信息Controller
@@ -37,10 +41,13 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/maintenance/channel")
+@Validated
 public class SonyChannelController extends BaseController {
     private final ISonyChannelService sonyChannelService;
 
     private final IWechatService wechatService;
+
+    private final IQrCodeService qrCodeService;
 
     private final RedisCache redisCache;
 
@@ -51,9 +58,9 @@ public class SonyChannelController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('maintenance:channel:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SonyChannel sonyChannel) {
+    public TableDataInfo list(SonyChannelDTO sonyChannel) {
         startPage();
-        List<SonyChannel> list = sonyChannelService.selectSonyChannelList(sonyChannel);
+        List<SonyChannel> list = sonyChannelService.selectSonyChannelListByDTO(sonyChannel);
         return getDataTable(list);
     }
 
@@ -63,10 +70,18 @@ public class SonyChannelController extends BaseController {
     @PreAuthorize("@ss.hasPermi('maintenance:channel:export')")
     @Log(title = "渠道信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, SonyChannel sonyChannel) {
-        List<SonyChannel> list = sonyChannelService.selectSonyChannelList(sonyChannel);
-        ExcelUtil<SonyChannel> util = new ExcelUtil<SonyChannel>(SonyChannel.class);
-        util.exportExcel(response, list, "渠道信息数据");
+    public void export(HttpServletResponse response, @RequestParam(required = false) List<Integer> ids) {
+        List<SonyChannelExcelVO> list = sonyChannelService.selectSonyChannelListByIds(ids);
+        list.forEach(e -> {
+            e.setQrCode(FileUtils.getQrCodePath(e.getChannelCode()));
+            e.setQrCodeWithLogo(FileUtils.getQrCodeWithLogoPath(e.getChannelCode()));
+        });
+        try {
+            FileUtils.export(response, "渠道信息", list);
+        } catch (Exception e) {
+            logger.error("导出渠道信息时出错了", e);
+            throw new ServiceException("导出渠道信息出错", HttpStatus.ERROR);
+        }
     }
 
     /**
@@ -85,36 +100,45 @@ public class SonyChannelController extends BaseController {
     @Log(title = "渠道信息", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @Transactional
-    public AjaxResult add(@RequestBody SonyChannel sonyChannel) {
-        // 生成渠道码
+    public AjaxResult add(@Valid @RequestBody SonyChannel sonyChannel) {
+        // 生成渠道代码. 规则: yyyyMMdd + 四位递增数字(每天凌晨重置为0000), 例: 202302050001
         String yyyyMMdd = DateUtil.format(LocalDateTime.now(), "yyyyMMdd");
-        int num = (Integer) redisCache.getCacheObject(redisUtils.getChannelCodeKey()) + 1;
-        String dailyChannelNum = String.format("%04d", num);
-        redisCache.setCacheObject(redisUtils.getChannelCodeKey(), num);
+        String dailyChannelNum;
+        Integer tmpDailyChannelNum;
+        try {
+            Integer channelCodeVal = redisCache.getCacheObject(redisUtils.getChannelCodeKey());
+            tmpDailyChannelNum = channelCodeVal;
+            AtomicInteger num = new AtomicInteger(channelCodeVal);
+            dailyChannelNum = String.format("%04d", num.incrementAndGet());
+            redisCache.setCacheObject(redisUtils.getChannelCodeKey(), num);
+        } catch (Exception e) {
+            logger.error("Redis获取当日渠道数出错");
+            throw new ServiceException("添加渠道失败", HttpStatus.ERROR);
+        }
         String channelCode = String.format("%s%s", yyyyMMdd, dailyChannelNum);
+
         // 保存渠道信息
         sonyChannel.setChannelCode(channelCode);
         sonyChannel.setCreatedBy(getUsername());
         int id = sonyChannelService.insertSonyChannel(sonyChannel);
 
-        // 获取ticket和url
+        String qrCodeUrl = null;
         try {
-            String qrCodeUrl = wechatService.getQrCodeUrl(id);
-            sonyChannel.setQrcodeUrl(qrCodeUrl);
+            // 获取微信二维码跳转url
+            qrCodeUrl = qrCodeService.getQrCodeUrl(id);
+            // 生成渠道码到指定位置
+            qrCodeService.saveQrCode(sonyChannel, channelCode);
         } catch (WxErrorException e) {
-            logger.error("添加渠道 {} 获取微信accessToken出错", sonyChannel.getPrimaryChannel(), e);
+            logger.error("添加编号为{}的渠道获取微信accessToken出错", id, e);
             throw new ServiceException("添加渠道失败", HttpStatus.ERROR);
-        }
-
-        // 生成渠道码到指定位置
-        try {
-            String content = "http://weixin.qq.com/q/028K_RoQBEeL010000M07o";
-            String filePath = RuoYiConfig.getUploadPath() + channelCode + ".png";
-            QrCodeGenerator.uploadQRCodeImage(content, filePath);
-        } catch (WriterException | IOException e) {
+        } catch (IOException | WriterException e) {
             logger.error("添加渠道 {} 生成渠道码出错", sonyChannel.getPrimaryChannel(), e);
             throw new ServiceException("添加渠道失败", HttpStatus.ERROR);
+        } finally {
+            // 抛异常需要恢复当天新增渠道数
+            redisCache.setCacheObject(redisUtils.getChannelCodeKey(), tmpDailyChannelNum);
         }
+        sonyChannel.setQrcodeUrl(qrCodeUrl);
 
         // 更新该渠道qrCodeUrl
         this.edit(sonyChannel);

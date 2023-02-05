@@ -27,6 +27,11 @@ public class RuoYiConfig
     /** 上传路径 */
     private static String profile;
 
+    /**
+     * logo存放位置
+     */
+    private static String logoPath;
+
     /** 获取地址开关 */
     private static boolean addressEnabled;
 
@@ -71,6 +76,14 @@ public class RuoYiConfig
     public void setDemoEnabled(boolean demoEnabled)
     {
         this.demoEnabled = demoEnabled;
+    }
+
+    public static String getLogoPath() {
+        return logoPath;
+    }
+
+    public void setLogoPath(String logoPath) {
+        RuoYiConfig.logoPath = logoPath;
     }
 
     public static String getProfile()
@@ -131,5 +144,12 @@ public class RuoYiConfig
     public static String getUploadPath()
     {
         return getProfile() + "/upload/";
+    }
+
+    /**
+     * 获取logo位置
+     */
+    public static String getLogo() {
+        return getLogoPath()+ "/logo.jpg";
     }
 }

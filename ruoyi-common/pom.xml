@@ -171,6 +171,11 @@
             <artifactId>hutool-all</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+        </dependency>
+
 <!--        <dependency>-->
 <!--            <groupId>com.ruoyi</groupId>-->
 <!--            <artifactId>ruoyi-system</artifactId>-->

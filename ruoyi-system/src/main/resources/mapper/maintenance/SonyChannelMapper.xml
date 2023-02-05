@@ -1,51 +1,112 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.maintenance.mapper.SonyChannelMapper">
-    
     <resultMap type="SonyChannel" id="SonyChannelResult">
-        <result property="id"    column="id"    />
-        <result property="primaryChannel"    column="primary_channel"    />
-        <result property="secondaryChannel"    column="secondary_channel"    />
-        <result property="channelCode"    column="channel_code"    />
-        <result property="province"    column="province"    />
-        <result property="city"    column="city"    />
-        <result property="maintenanceStationName"    column="maintenance_station_name"    />
-        <result property="maintenanceStationCode"    column="maintenance_station_code"    />
-        <result property="storeName"    column="store_name"    />
-        <result property="storeCode"    column="store_code"    />
-        <result property="remark"    column="remark"    />
-        <result property="qrcodeUrl"    column="qrcode_url"    />
-        <result property="delFlag"    column="del_flag"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="createdBy"    column="created_by"    />
-        <result property="updatedBy"    column="updated_by"    />
+        <result property="id" column="id"/>
+        <result property="primaryChannel" column="primary_channel"/>
+        <result property="secondaryChannel" column="secondary_channel"/>
+        <result property="channelCode" column="channel_code"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="maintenanceStationName" column="maintenance_station_name"/>
+        <result property="maintenanceStationCode" column="maintenance_station_code"/>
+        <result property="storeName" column="store_name"/>
+        <result property="storeCode" column="store_code"/>
+        <result property="remark" column="remark"/>
+        <result property="qrcodeUrl" column="qrcode_url"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="updatedBy" column="updated_by"/>
     </resultMap>
 
     <sql id="selectSonyChannelVo">
-        select id, primary_channel, secondary_channel, channel_code, province, city, maintenance_station_name, maintenance_station_code, store_name, store_code, remark, qrcode_url, del_flag, create_time, update_time, created_by, updated_by from sony_channel
+        select id,
+               primary_channel,
+               secondary_channel,
+               channel_code,
+               province,
+               city,
+               maintenance_station_name,
+               maintenance_station_code,
+               store_name,
+               store_code,
+               remark,
+               qrcode_url,
+               del_flag,
+               create_time,
+               update_time,
+               created_by,
+               updated_by
+        from sony_channel
     </sql>
 
     <select id="selectSonyChannelList" parameterType="SonyChannel" resultMap="SonyChannelResult">
         <include refid="selectSonyChannelVo"/>
-        <where>  
-            <if test="primaryChannel != null  and primaryChannel != ''"> and primary_channel = #{primaryChannel}</if>
-            <if test="secondaryChannel != null  and secondaryChannel != ''"> and secondary_channel = #{secondaryChannel}</if>
-            <if test="channelCode != null  and channelCode != ''"> and channel_code = #{channelCode}</if>
-            <if test="province != null  and province != ''"> and province = #{province}</if>
-            <if test="city != null  and city != ''"> and city = #{city}</if>
-            <if test="maintenanceStationName != null  and maintenanceStationName != ''"> and maintenance_station_name like concat('%', #{maintenanceStationName}, '%')</if>
-            <if test="maintenanceStationCode != null  and maintenanceStationCode != ''"> and maintenance_station_code = #{maintenanceStationCode}</if>
-            <if test="storeName != null  and storeName != ''"> and store_name like concat('%', #{storeName}, '%')</if>
-            <if test="storeCode != null  and storeCode != ''"> and store_code = #{storeCode}</if>
-            <if test="qrcodeUrl != null  and qrcodeUrl != ''"> and qrcode_url = #{qrcodeUrl}</if>
-            <if test="createdBy != null  and createdBy != ''"> and created_by = #{createdBy}</if>
-            <if test="updatedBy != null  and updatedBy != ''"> and updated_by = #{updatedBy}</if>
+        <where>
+            <if test="primaryChannel != null  and primaryChannel != ''">
+                and primary_channel like concat('%', #{primaryChannel}, '%')
+            </if>
+            <if test="secondaryChannel != null  and secondaryChannel != ''">
+                and secondary_channel like concat('%', #{secondaryChannel}, '%')
+            </if>
+            <if test="channelCode != null  and channelCode != ''">
+                and channel_code = #{channelCode}
+            </if>
+            <if test="province != null  and province != ''">
+                and province = #{province}
+            </if>
+            <if test="city != null  and city != ''">
+                and city = #{city}
+            </if>
+            <if test="maintenanceStationName != null  and maintenanceStationName != ''">
+                and maintenance_station_name like concat('%', #{maintenanceStationName}, '%')
+            </if>
+            <if test="maintenanceStationCode != null  and maintenanceStationCode != ''">
+                and maintenance_station_code = #{maintenanceStationCode}
+            </if>
+            <if test="storeName != null  and storeName != ''">
+                and store_name like concat('%', #{storeName}, '%')
+            </if>
+            <if test="storeCode != null  and storeCode != ''">
+                and store_code = #{storeCode}
+            </if>
+            <if test="qrcodeUrl != null  and qrcodeUrl != ''">
+                and qrcode_url = #{qrcodeUrl}
+            </if>
+            <if test="createdBy != null  and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="updatedBy != null  and updatedBy != ''">
+                and updated_by = #{updatedBy}
+            </if>
         </where>
     </select>
-    
+
+    <select id="selectSonyChannelListByDTO" parameterType="SonyChannelDTO" resultMap="SonyChannelResult">
+        <include refid="selectSonyChannelVo"/>
+        <where>
+            <if test="primaryChannel != null  and primaryChannel != ''">
+                and primary_channel like concat('%', #{primaryChannel}, '%')
+            </if>
+            <if test="secondaryChannel != null  and secondaryChannel != ''">
+                and secondary_channel like concat('%', #{secondaryChannel}, '%')
+            </if>
+            <if test="maintenanceStationName != null  and maintenanceStationName != ''">
+                and maintenance_station_name like concat('%', #{maintenanceStationName}, '%')
+            </if>
+            <if test="startTime != null">
+                and create_time &gt;= #{startTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null">
+                and create_time &lt;= #{endTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
     <select id="selectSonyChannelById" parameterType="Long" resultMap="SonyChannelResult">
         <include refid="selectSonyChannelVo"/>
         where id = #{id}
@@ -54,76 +115,187 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSonyChannel" useGeneratedKeys="true" keyProperty="id" parameterType="SonyChannel">
         insert into sony_channel
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">id,</if>
-            <if test="primaryChannel != null and primaryChannel != ''">primary_channel,</if>
-            <if test="secondaryChannel != null">secondary_channel,</if>
-            <if test="channelCode != null and channelCode != ''">channel_code,</if>
-            <if test="province != null">province,</if>
-            <if test="city != null">city,</if>
-            <if test="maintenanceStationName != null and maintenanceStationName != ''">maintenance_station_name,</if>
-            <if test="maintenanceStationCode != null and maintenanceStationCode != ''">maintenance_station_code,</if>
-            <if test="storeName != null and storeName != ''">store_name,</if>
-            <if test="storeCode != null and storeCode != ''">store_code,</if>
-            <if test="remark != null">remark,</if>
-            <if test="qrcodeUrl != null">qrcode_url,</if>
-            <if test="delFlag != null">del_flag,</if>
-            <if test="createTime != null">create_time,</if>
-            <if test="updateTime != null">update_time,</if>
-            <if test="createdBy != null">created_by,</if>
-            <if test="updatedBy != null">updated_by,</if>
-         </trim>
+            <if test="id != null">
+                id,
+            </if>
+            <if test="primaryChannel != null and primaryChannel != ''">
+                primary_channel,
+            </if>
+            <if test="secondaryChannel != null">
+                secondary_channel,
+            </if>
+            <if test="channelCode != null and channelCode != ''">
+                channel_code,
+            </if>
+            <if test="province != null">
+                province,
+            </if>
+            <if test="city != null">
+                city,
+            </if>
+            <if test="maintenanceStationName != null and maintenanceStationName != ''">
+                maintenance_station_name,
+            </if>
+            <if test="maintenanceStationCode != null and maintenanceStationCode != ''">
+                maintenance_station_code,
+            </if>
+            <if test="storeName != null and storeName != ''">
+                store_name,
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                store_code,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="qrcodeUrl != null">
+                qrcode_url,
+            </if>
+            <if test="delFlag != null">
+                del_flag,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="createdBy != null">
+                created_by,
+            </if>
+            <if test="updatedBy != null">
+                updated_by,
+            </if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">#{id},</if>
-            <if test="primaryChannel != null and primaryChannel != ''">#{primaryChannel},</if>
-            <if test="secondaryChannel != null">#{secondaryChannel},</if>
-            <if test="channelCode != null and channelCode != ''">#{channelCode},</if>
-            <if test="province != null">#{province},</if>
-            <if test="city != null">#{city},</if>
-            <if test="maintenanceStationName != null and maintenanceStationName != ''">#{maintenanceStationName},</if>
-            <if test="maintenanceStationCode != null and maintenanceStationCode != ''">#{maintenanceStationCode},</if>
-            <if test="storeName != null and storeName != ''">#{storeName},</if>
-            <if test="storeCode != null and storeCode != ''">#{storeCode},</if>
-            <if test="remark != null">#{remark},</if>
-            <if test="qrcodeUrl != null">#{qrcodeUrl},</if>
-            <if test="delFlag != null">#{delFlag},</if>
-            <if test="createTime != null">#{createTime},</if>
-            <if test="updateTime != null">#{updateTime},</if>
-            <if test="createdBy != null">#{createdBy},</if>
-            <if test="updatedBy != null">#{updatedBy},</if>
-         </trim>
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="primaryChannel != null and primaryChannel != ''">
+                #{primaryChannel},
+            </if>
+            <if test="secondaryChannel != null">
+                #{secondaryChannel},
+            </if>
+            <if test="channelCode != null and channelCode != ''">
+                #{channelCode},
+            </if>
+            <if test="province != null">
+                #{province},
+            </if>
+            <if test="city != null">
+                #{city},
+            </if>
+            <if test="maintenanceStationName != null and maintenanceStationName != ''">
+                #{maintenanceStationName},
+            </if>
+            <if test="maintenanceStationCode != null and maintenanceStationCode != ''">
+                #{maintenanceStationCode},
+            </if>
+            <if test="storeName != null and storeName != ''">
+                #{storeName},
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                #{storeCode},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+            <if test="qrcodeUrl != null">
+                #{qrcodeUrl},
+            </if>
+            <if test="delFlag != null">
+                #{delFlag},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="createdBy != null">
+                #{createdBy},
+            </if>
+            <if test="updatedBy != null">
+                #{updatedBy},
+            </if>
+        </trim>
     </insert>
 
     <update id="updateSonyChannel" parameterType="SonyChannel">
         update sony_channel
         <trim prefix="SET" suffixOverrides=",">
-            <if test="primaryChannel != null and primaryChannel != ''">primary_channel = #{primaryChannel},</if>
-            <if test="secondaryChannel != null">secondary_channel = #{secondaryChannel},</if>
-            <if test="channelCode != null and channelCode != ''">channel_code = #{channelCode},</if>
-            <if test="province != null">province = #{province},</if>
-            <if test="city != null">city = #{city},</if>
-            <if test="maintenanceStationName != null and maintenanceStationName != ''">maintenance_station_name = #{maintenanceStationName},</if>
-            <if test="maintenanceStationCode != null and maintenanceStationCode != ''">maintenance_station_code = #{maintenanceStationCode},</if>
-            <if test="storeName != null and storeName != ''">store_name = #{storeName},</if>
-            <if test="storeCode != null and storeCode != ''">store_code = #{storeCode},</if>
-            <if test="remark != null">remark = #{remark},</if>
-            <if test="qrcodeUrl != null">qrcode_url = #{qrcodeUrl},</if>
-            <if test="delFlag != null">del_flag = #{delFlag},</if>
-            <if test="createTime != null">create_time = #{createTime},</if>
-            <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="createdBy != null">created_by = #{createdBy},</if>
-            <if test="updatedBy != null">updated_by = #{updatedBy},</if>
+            <if test="primaryChannel != null and primaryChannel != ''">
+                primary_channel = #{primaryChannel},
+            </if>
+            <if test="secondaryChannel != null">
+                secondary_channel = #{secondaryChannel},
+            </if>
+            <if test="channelCode != null and channelCode != ''">
+                channel_code = #{channelCode},
+            </if>
+            <if test="province != null">
+                province = #{province},
+            </if>
+            <if test="city != null">
+                city = #{city},
+            </if>
+            <if test="maintenanceStationName != null and maintenanceStationName != ''">
+                maintenance_station_name = #{maintenanceStationName},
+            </if>
+            <if test="maintenanceStationCode != null and maintenanceStationCode != ''">
+                maintenance_station_code = #{maintenanceStationCode},
+            </if>
+            <if test="storeName != null and storeName != ''">
+                store_name = #{storeName},
+            </if>
+            <if test="storeCode != null and storeCode != ''">
+                store_code = #{storeCode},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="qrcodeUrl != null">
+                qrcode_url = #{qrcodeUrl},
+            </if>
+            <if test="delFlag != null">
+                del_flag = #{delFlag},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy},
+            </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy},
+            </if>
         </trim>
         where id = #{id}
     </update>
 
     <delete id="deleteSonyChannelById" parameterType="Long">
-        delete from sony_channel where id = #{id}
+        delete
+        from sony_channel
+        where id = #{id}
     </delete>
 
     <delete id="deleteSonyChannelByIds" parameterType="String">
-        delete from sony_channel where id in 
+        delete
+        from sony_channel where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectSonyChannelListByIds" resultType="com.ruoyi.maintenance.domain.excel.SonyChannelExcelVO">
+        <include refid="selectSonyChannelVo"/>
+        where id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

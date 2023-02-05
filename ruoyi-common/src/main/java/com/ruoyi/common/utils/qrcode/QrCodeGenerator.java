@@ -9,6 +9,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,11 +38,11 @@ public class QrCodeGenerator {
 
     public static int DEFAULT_WIDTH = 645;
     public static int DEFAULT_HEIGHT = 645;
-    
+
     /**
      * 生成默认大小的渠道码
+     *
      * @param content 二维码内容
-     * @param path 存放路径
      */
     public static BufferedImage generateQRCodeImage(String content) throws WriterException {
         return generateQRCodeImage(content, DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -61,21 +62,64 @@ public class QrCodeGenerator {
     }
 
     /**
-     * @param content 二维码内容
-     * @param filePath 图片路径
+     * @param content   二维码内容
+     * @param imagePath 图片路径
      * @throws WriterException 获取QRCodeWriter异常
      */
-    public static void uploadQRCodeImage(String content, String filePath) throws WriterException, IOException {
-        uploadQRCodeImage(content, DEFAULT_WIDTH, DEFAULT_HEIGHT, filePath);
+    public static void uploadQRCodeImage(String content, String imagePath) throws WriterException, IOException {
+        uploadQRCodeImage(content, DEFAULT_WIDTH, DEFAULT_HEIGHT, imagePath);
     }
-    
-    public static void uploadQRCodeImage(String content, int width, int height, String file) throws WriterException, IOException {
+
+    public static void uploadQRCodeImage(String content, int width, int height, String imagePath) throws WriterException, IOException {
         BufferedImage qrCode = generateQRCodeImage(content, width, height);
-        ImageIO.write(qrCode, QrCodeGenerator.IMAGE_TYPE_PNG, new File(file));
+        ImageIO.write(qrCode, QrCodeGenerator.IMAGE_TYPE_PNG, new File(imagePath));
     }
-    
+
+    public static void uploadQRCodeImageWithLogo(String content, String imagePath, String logoPath) throws WriterException, IOException {
+        uploadQRCodeImageWithLogo(content, DEFAULT_WIDTH, DEFAULT_HEIGHT, imagePath, logoPath);
+    }
+
+    public static void uploadQRCodeImageWithLogo(String content, int width, int height, String imagePath, String logoPath) throws WriterException, IOException {
+        BufferedImage qrCode = generateQRCodeImageWithLogo(content, width, height, logoPath);
+        ImageIO.write(qrCode, QrCodeGenerator.IMAGE_TYPE_PNG, new File(imagePath));
+    }
+
+    /**
+     * 生成带logo二维码
+     * @param content 二维码内容
+     * @param logoPath logo存放的绝对路径
+     * @return 带logo二维码
+     */
+    public static BufferedImage generateQRCodeImageWithLogo(String content, int width, int height, String logoPath) throws WriterException, IOException {
+        BufferedImage qrCode = generateQRCodeImage(content, width, height);
+        Graphics2D graphics = qrCode.createGraphics();
+        BufferedImage logo = ImageIO.read(new File(logoPath));
+        // 设置logo宽高为二维码的0.2
+        int logoHeight = qrCode.getHeight() * 2 / 10;
+        int logoWidth = qrCode.getWidth() * 2 / 10;
+        // 设置logo在二维码中心
+        int x = (qrCode.getWidth() - logoWidth) / 2;
+        int y = (qrCode.getHeight() - logoWidth) / 2;
+        //右下角，15为调整值
+        int rightDownX = qrCode.getWidth() - logoWidth - 15;
+        int rightDownY = qrCode.getHeight() - logoHeight - 15;
+        graphics.drawImage(logo, x, y, logoWidth, logoHeight, null);
+        graphics.drawRoundRect(rightDownX, rightDownY, logoWidth, logoHeight, 15, 15);
+        //logo边框大小
+        graphics.setStroke(new BasicStroke(2));
+        //logo边框颜色
+        graphics.setColor(Color.WHITE);
+        graphics.drawRect(x, y, logoWidth, logoHeight);
+        graphics.dispose();
+        logo.flush();
+        qrCode.flush();
+
+        return qrCode;
+    }
+
     /**
      * 生成位图
+     *
      * @param content 二维码内容
      * @param width   二维码宽度
      * @param height  二维码高度
@@ -94,9 +138,9 @@ public class QrCodeGenerator {
     /**
      * 生成二维码，返回字节流
      *
-     * @param content   二维码需要包含的信息
-     * @param width  二维码宽度
-     * @param height 二维码高度
+     * @param content 二维码需要包含的信息
+     * @param width   二维码宽度
+     * @param height  二维码高度
      * @return 二维码字节流
      * @throws WriterException QRCodeWriter异常
      * @throws IOException     MatrixToImageWriter写成steam流会抛的异常
@@ -108,6 +152,6 @@ public class QrCodeGenerator {
         MatrixToImageWriter.writeToStream(bitMatrix, IMAGE_TYPE_PNG, pngOutputStream);
         return pngOutputStream.toByteArray();
     }
-    
-    
+
+
 }

@@ -1,7 +1,10 @@
 package com.ruoyi.framework.web.exception;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.ruoyi.common.constant.HttpStatus;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.exception.DemoModeException;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.StringUtils;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +15,8 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.ruoyi.common.constant.HttpStatus;
-import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.exception.DemoModeException;
-import com.ruoyi.common.exception.ServiceException;
-import com.ruoyi.common.utils.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,6 +77,13 @@ public class GlobalExceptionHandler {
     public AjaxResult handleException(Exception e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',发生系统异常.", requestURI, e);
+        return AjaxResult.error(e.getMessage());
+    }
+
+    @ExceptionHandler(Throwable.class)
+    public AjaxResult handleThrowable(Exception e, HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        log.error("请求地址'{}',发生未知异常.", requestURI, e);
         return AjaxResult.error(e.getMessage());
     }
     

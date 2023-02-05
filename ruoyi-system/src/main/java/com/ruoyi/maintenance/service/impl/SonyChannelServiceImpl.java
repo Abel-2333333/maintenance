@@ -2,6 +2,8 @@ package com.ruoyi.maintenance.service.impl;
 
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.maintenance.domain.SonyChannel;
+import com.ruoyi.maintenance.domain.dto.SonyChannelDTO;
+import com.ruoyi.maintenance.domain.excel.SonyChannelExcelVO;
 import com.ruoyi.maintenance.mapper.SonyChannelMapper;
 import com.ruoyi.maintenance.service.ISonyChannelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,11 @@ public class SonyChannelServiceImpl implements ISonyChannelService
         return sonyChannelMapper.selectSonyChannelById(id);
     }
 
+    @Override
+    public List<SonyChannel> selectSonyChannelList(SonyChannel sonyChannel) {
+        return sonyChannelMapper.selectSonyChannelList(sonyChannel);
+    }
+
     /**
      * 查询渠道信息列表
      * 
@@ -40,9 +47,9 @@ public class SonyChannelServiceImpl implements ISonyChannelService
      * @return 渠道信息
      */
     @Override
-    public List<SonyChannel> selectSonyChannelList(SonyChannel sonyChannel)
+    public List<SonyChannel> selectSonyChannelListByDTO(SonyChannelDTO sonyChannel)
     {
-        return sonyChannelMapper.selectSonyChannelList(sonyChannel);
+        return sonyChannelMapper.selectSonyChannelListByDTO(sonyChannel);
     }
 
     /**
@@ -93,5 +100,10 @@ public class SonyChannelServiceImpl implements ISonyChannelService
     public int deleteSonyChannelById(Long id)
     {
         return sonyChannelMapper.deleteSonyChannelById(id);
+    }
+
+    @Override
+    public List<SonyChannelExcelVO> selectSonyChannelListByIds(List<Integer> ids) {
+        return sonyChannelMapper.selectSonyChannelListByIds(ids);
     }
 }
