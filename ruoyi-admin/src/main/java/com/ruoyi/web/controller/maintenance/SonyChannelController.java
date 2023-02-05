@@ -73,6 +73,7 @@ public class SonyChannelController extends BaseController {
     public void export(HttpServletResponse response, @RequestParam(required = false) List<Integer> ids) {
         List<SonyChannelExcelVO> list = sonyChannelService.selectSonyChannelListByIds(ids);
         list.forEach(e -> {
+            // 填充二维码绝对路径
             e.setQrCode(FileUtils.getQrCodePath(e.getChannelCode()));
             e.setQrCodeWithLogo(FileUtils.getQrCodeWithLogoPath(e.getChannelCode()));
         });
@@ -126,19 +127,20 @@ public class SonyChannelController extends BaseController {
         try {
             // 获取微信二维码跳转url
             qrCodeUrl = qrCodeService.getQrCodeUrl(id);
+            sonyChannel.setQrcodeUrl(qrCodeUrl);
             // 生成渠道码到指定位置
             qrCodeService.saveQrCode(sonyChannel, channelCode);
         } catch (WxErrorException e) {
+            // 抛异常需要恢复当天新增渠道数
+            redisCache.setCacheObject(redisUtils.getChannelCodeKey(), tmpDailyChannelNum);
             logger.error("添加编号为{}的渠道获取微信accessToken出错", id, e);
             throw new ServiceException("添加渠道失败", HttpStatus.ERROR);
         } catch (IOException | WriterException e) {
-            logger.error("添加渠道 {} 生成渠道码出错", sonyChannel.getPrimaryChannel(), e);
-            throw new ServiceException("添加渠道失败", HttpStatus.ERROR);
-        } finally {
             // 抛异常需要恢复当天新增渠道数
             redisCache.setCacheObject(redisUtils.getChannelCodeKey(), tmpDailyChannelNum);
+            logger.error("添加渠道 {} 生成渠道码出错", sonyChannel.getPrimaryChannel(), e);
+            throw new ServiceException("添加渠道失败", HttpStatus.ERROR);
         }
-        sonyChannel.setQrcodeUrl(qrCodeUrl);
 
         // 更新该渠道qrCodeUrl
         this.edit(sonyChannel);

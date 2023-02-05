@@ -293,9 +293,11 @@
 
     <select id="selectSonyChannelListByIds" resultType="com.ruoyi.maintenance.domain.excel.SonyChannelExcelVO">
         <include refid="selectSonyChannelVo"/>
-        where id in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
+        <if test="list != null and list.size() != 0">
+            where id in
+            <foreach item="id" collection="list" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
     </select>
 </mapper>
