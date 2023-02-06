@@ -1,7 +1,6 @@
 package com.ruoyi.maintenance.service;
 
 import com.google.zxing.WriterException;
-import com.ruoyi.maintenance.domain.SonyChannel;
 import me.chanjar.weixin.common.error.WxErrorException;
 
 import java.io.IOException;
@@ -24,5 +23,5 @@ public interface IQrCodeService {
      * @param sonyChannel 渠道信息
      * @param channelCode 渠道代码
      */
-    void saveQrCode(SonyChannel sonyChannel, String channelCode) throws IOException, WriterException;
+    void saveQrCode(String qrCodeUrl, String channelCode) throws IOException, WriterException;
 }

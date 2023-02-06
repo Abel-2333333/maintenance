@@ -23,7 +23,7 @@ public class SonyChannel extends BaseEntity {
      */
     @Excel(name = "渠道编号", cellType = Excel.ColumnType.NUMERIC, prompt = "渠道编号")
     @ExcelProperty(value = "渠道编号")
-    private Long id;
+    private long id;
 
     /**
      * 一级渠道
@@ -121,7 +121,7 @@ public class SonyChannel extends BaseEntity {
         this.id = id;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 

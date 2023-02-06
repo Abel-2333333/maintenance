@@ -4,7 +4,6 @@ import com.google.zxing.WriterException;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.qrcode.QrCodeGenerator;
 import com.ruoyi.common.wechat.util.FileUtils;
-import com.ruoyi.maintenance.domain.SonyChannel;
 import com.ruoyi.maintenance.service.IQrCodeService;
 import com.ruoyi.maintenance.service.IWechatService;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -29,14 +28,12 @@ public class QrCodeServiceImpl implements IQrCodeService {
 
     @Override
     public String getQrCodeUrl(Integer id) throws WxErrorException {
-        String qrCodeUrl = null;
-        qrCodeUrl = wechatService.getQrCodeUrl(id);
-        return qrCodeUrl;
+        return wechatService.getQrCodeUrl(id);
     }
 
     @Override
-    public void saveQrCode(SonyChannel sonyChannel, String channelCode) throws IOException, WriterException {
-        String content = sonyChannel.getQrcodeUrl();
+    public void saveQrCode(String qrCodeUrl, String channelCode) throws IOException, WriterException {
+        String content = qrCodeUrl;
         String qrCodePath = FileUtils.getQrCodePath(channelCode);
         String qrCodeWithLogoPath = FileUtils.getQrCodeWithLogoPath(channelCode);
         String logoPath = RuoYiConfig.getLogo();

@@ -3,6 +3,7 @@ package com.ruoyi.maintenance.mapper;
 import com.ruoyi.maintenance.domain.SonyChannel;
 import com.ruoyi.maintenance.domain.dto.SonyChannelDTO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelExcelVO;
+import com.ruoyi.maintenance.domain.excel.SonyChannelImportVO;
 import com.ruoyi.maintenance.domain.vo.SonyChannelVO;
 
 import java.util.List;
@@ -74,4 +75,8 @@ public interface SonyChannelMapper
 	List<SonyChannel> selectSonyChannelByIds(Long[] ids);
     
     int batchUpdate(Long[] ids);
+
+    void batchUpdateSonyChannel(List<SonyChannelImportVO> cachedDataList);
+
+    void batchInsert(List<SonyChannelImportVO> cachedDataList);
 }

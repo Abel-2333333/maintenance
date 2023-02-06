@@ -44,7 +44,8 @@
         from sony_channel
     </sql>
 
-    <select id="selectSonyChannelList" parameterType="com.ruoyi.maintenance.domain.SonyChannel" resultMap="SonyChannelResult">
+    <select id="selectSonyChannelList" parameterType="com.ruoyi.maintenance.domain.SonyChannel"
+            resultMap="SonyChannelResult">
         <include refid="selectSonyChannelVo"/>
         <where>
             <if test="primaryChannel != null  and primaryChannel != ''">
@@ -221,6 +222,21 @@
             </if>
         </trim>
     </insert>
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id">
+        insert into sony_channel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, primary_channel, secondary_channel, channel_code, province, city, maintenance_station_name,
+            maintenance_station_code, store_name, store_code, remark, qrcode_url, del_flag, create_time, update_time,
+            created_by, updated_by,
+        </trim>
+        values
+        <foreach collection="list" item="item" separator=",">
+            (null, #{item.primaryChannel}, #{item.secondaryChannel}, #{item.channelCode}, #{item.province}, #{item.city},
+            #{item.maintenanceStationName}, #{item.maintenanceStationCode}, #{item.storeName}, #{item.storeCode},
+            #{item.remark}, null, 0, #{item.createTime}, #{item.updateTime}, #{item.createdBy},
+            #{item.updatedBy})
+        </foreach>
+    </insert>
 
     <update id="updateSonyChannel" parameterType="SonyChannel">
         update sony_channel
@@ -321,6 +337,121 @@
         WHERE id IN
         <foreach collection="array" item="id" open="(" separator="," close=")">
             #{id}
+        </foreach>
+    </update>
+
+    <update id="batchUpdateSonyChannel" parameterType="SonyChannelImportVO">
+        update sony_channel
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="primary_channel=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.primaryChannel != null and item.primaryChannel != ''">
+                        when id = #{item.id} then #{item.primaryChannel}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="secondary_channel=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.secondaryChannel != null and item.secondaryChannel != ''">
+                        when id = #{item.id} then #{item.secondaryChannel}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="province=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.province != null and item.province != ''">
+                        when id = #{item.id} then #{item.province}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="city=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.city != null and item.city != ''">
+                        when id = #{item.id} then #{item.city}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="maintenance_station_name=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.maintenanceStationName != null and item.maintenanceStationName != ''">
+                        when id = #{item.id} then #{item.maintenanceStationName}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="maintenance_station_code=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.maintenanceStationCode != null and item.maintenanceStationCode != ''">
+                        when id = #{item.id} then #{item.maintenanceStationCode}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="store_name=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.storeName != null and item.storeName != ''">
+                        when id = #{item.id} then #{item.storeName}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="store_code=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.storeCode != null and item.storeCode != ''">
+                        when id = #{item.id} then #{item.storeCode}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="store_code=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.storeCode != null and item.storeCode != ''">
+                        when id = #{item.id} then #{item.storeCode}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="qrcode_url=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.qrcodeUrl != null and item.qrcodeUrl != ''">
+                        when id = #{item.id} then #{item.qrcodeUrl}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="remark=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.remark != null and item.remark != ''">
+                        when id = #{item.id} then #{item.remark}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="create_time=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.createTime != null">
+                        when id = #{item.id} then #{item.createTime}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="update_time=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.updateTime != null">
+                        when id = #{item.id} then #{item.updateTime}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="created_by=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.createdBy != null and item.createdBy != ''">
+                        when id = #{item.id} then #{item.createdBy}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="updated_by=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.updatedBy != null and item.updatedBy != ''">
+                        when id = #{item.id} then #{item.updatedBy}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where
+        <foreach collection="list" separator="or" item="item" index="index">
+            id = #{item.id}
         </foreach>
     </update>
 </mapper>
