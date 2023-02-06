@@ -3,6 +3,7 @@ package com.ruoyi.maintenance.mapper;
 import com.ruoyi.maintenance.domain.SonyChannel;
 import com.ruoyi.maintenance.domain.dto.SonyChannelDTO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelExcelVO;
+import com.ruoyi.maintenance.domain.vo.SonyChannelVO;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public interface SonyChannelMapper
      */
     public List<SonyChannel> selectSonyChannelList(SonyChannel sonyChannel);
 
-    List<SonyChannel> selectSonyChannelListByDTO(SonyChannelDTO sonyChannelDTO);
+    List<SonyChannelVO> selectSonyChannelListByDTO(SonyChannelDTO sonyChannelDTO);
 
     /**
      * 新增渠道信息
@@ -69,4 +70,8 @@ public interface SonyChannelMapper
      * @return 匹配的结果
      */
     List<SonyChannelExcelVO> selectSonyChannelListByIds(List<Integer> ids);
+	
+	List<SonyChannel> selectSonyChannelByIds(Long[] ids);
+    
+    int batchUpdate(Long[] ids);
 }

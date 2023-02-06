@@ -3,6 +3,7 @@ package com.ruoyi.maintenance.service;
 import com.ruoyi.maintenance.domain.SonyChannel;
 import com.ruoyi.maintenance.domain.dto.SonyChannelDTO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelExcelVO;
+import com.ruoyi.maintenance.domain.vo.SonyChannelVO;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface ISonyChannelService
      * @param sonyChannel 渠道信息
      * @return 渠道信息集合
      */
-    public List<SonyChannel> selectSonyChannelListByDTO(SonyChannelDTO sonyChannel);
+    public List<SonyChannelVO> selectSonyChannelListByDTO(SonyChannelDTO sonyChannel);
 
     /**
      * 新增渠道信息
@@ -71,4 +72,8 @@ public interface ISonyChannelService
     public int deleteSonyChannelById(Long id);
 
     List<SonyChannelExcelVO> selectSonyChannelListByIds(List<Integer> ids);
+    
+    List<SonyChannel> selectSonyChannelByIds(Long[] ids);
+    
+    int batchUpdateSonyChannel(Long[] ids);
 }

@@ -1,9 +1,10 @@
-package com.ruoyi.maintenance.domain;
+package com.ruoyi.maintenance.domain.vo;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
+import com.alibaba.excel.converters.string.StringImageConverter;
 import com.ruoyi.common.annotation.Excel;
-import com.ruoyi.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -15,7 +16,7 @@ import java.util.Date;
  * @author Abel
  * @date 2023-02-01
  */
-public class SonyChannel extends BaseEntity {
+public class SonyChannelVO {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -46,6 +47,20 @@ public class SonyChannel extends BaseEntity {
     @Excel(name = "渠道代码")
     @ExcelProperty(value = "渠道代码")
     private String channelCode;
+    
+    /**
+     * 带Logo渠道码
+     */
+    @ExcelProperty(value = "渠道二维码(带Logo)", converter = StringImageConverter.class, order = 5)
+    @ColumnWidth(75/4)
+    private String qrCodeWithLogo;
+    
+    /**
+     * 不带Logo渠道码
+     */
+    @ExcelProperty(value = "渠道二维码(不带Logo)", converter = StringImageConverter.class, order = 6)
+    @ColumnWidth(75/4)
+    private String qrCode;
 
     /**
      * 省
@@ -92,14 +107,12 @@ public class SonyChannel extends BaseEntity {
     /**
      * 微信生成的二维码跳转的url
      */
-
     private String qrcodeUrl;
 
 
     /**
      * 逻辑删除状态  0.未删除 1.已删除
      */
-
     private Integer delFlag;
 
 
@@ -111,6 +124,10 @@ public class SonyChannel extends BaseEntity {
     @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
     @ExcelProperty(value = "创建时间")
     private Date createTime;
+    
+    @Excel(name = "更新时间", dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
+    private Date updateTime;
 
     private String createdBy;
 
@@ -148,7 +165,31 @@ public class SonyChannel extends BaseEntity {
     public String getChannelCode() {
         return channelCode;
     }
-
+    
+    public String getQrCodeWithLogo() {
+        return qrCodeWithLogo;
+    }
+    
+    public void setQrCodeWithLogo(String qrCodeWithLogo) {
+        this.qrCodeWithLogo = qrCodeWithLogo;
+    }
+    
+    public String getQrCode() {
+        return qrCode;
+    }
+    
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
+    }
+    
+    public String getRemark() {
+        return remark;
+    }
+    
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+    
     public void setProvince(String province) {
         this.province = province;
     }
@@ -229,16 +270,24 @@ public class SonyChannel extends BaseEntity {
         return updatedBy;
     }
 
-    @Override
+
     public Date getCreateTime() {
         return createTime;
     }
 
-    @Override
+
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
-
+    
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+    
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+    
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)

@@ -25,6 +25,7 @@ public class FileUtils<T> {
     }
 
     /**
+     * 获取带logo二维码绝对路径
      * @param channelCode 渠道代码
      * @return 带logo二维码的绝对路径
      */

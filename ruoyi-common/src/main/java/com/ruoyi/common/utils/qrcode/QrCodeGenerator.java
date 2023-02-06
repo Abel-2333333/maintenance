@@ -7,6 +7,8 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -38,6 +40,8 @@ public class QrCodeGenerator {
 
     public static int DEFAULT_WIDTH = 645;
     public static int DEFAULT_HEIGHT = 645;
+    
+    private static Logger logger = LoggerFactory.getLogger(QrCodeGenerator.class);
 
     /**
      * 生成默认大小的渠道码
@@ -93,7 +97,14 @@ public class QrCodeGenerator {
     public static BufferedImage generateQRCodeImageWithLogo(String content, int width, int height, String logoPath) throws WriterException, IOException {
         BufferedImage qrCode = generateQRCodeImage(content, width, height);
         Graphics2D graphics = qrCode.createGraphics();
-        BufferedImage logo = ImageIO.read(new File(logoPath));
+        BufferedImage logo = null;
+        try {
+            File logFile = new File(logoPath);
+            logo = ImageIO.read(logFile);
+        } catch (IOException e) {
+            logger.error("logo路径: {} 读取失败", logoPath);
+            throw new IOException(e);
+        }
         // 设置logo宽高为二维码的0.2
         int logoHeight = qrCode.getHeight() * 2 / 10;
         int logoWidth = qrCode.getWidth() * 2 / 10;

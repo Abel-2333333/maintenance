@@ -15,6 +15,7 @@ import com.ruoyi.common.wechat.util.RedisUtils;
 import com.ruoyi.maintenance.domain.SonyChannel;
 import com.ruoyi.maintenance.domain.dto.SonyChannelDTO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelExcelVO;
+import com.ruoyi.maintenance.domain.vo.SonyChannelVO;
 import com.ruoyi.maintenance.service.IQrCodeService;
 import com.ruoyi.maintenance.service.ISonyChannelService;
 import com.ruoyi.maintenance.service.IWechatService;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * 渠道信息Controller
@@ -43,129 +45,171 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequestMapping("/maintenance/channel")
 @Validated
 public class SonyChannelController extends BaseController {
-    private final ISonyChannelService sonyChannelService;
-
-    private final IWechatService wechatService;
-
-    private final IQrCodeService qrCodeService;
-
-    private final RedisCache redisCache;
-
-    private final RedisUtils redisUtils;
-
-    /**
-     * 查询渠道信息列表
-     */
-    @PreAuthorize("@ss.hasPermi('maintenance:channel:list')")
-    @GetMapping("/list")
-    public TableDataInfo list(SonyChannelDTO sonyChannel) {
-        startPage();
-        List<SonyChannel> list = sonyChannelService.selectSonyChannelListByDTO(sonyChannel);
-        return getDataTable(list);
-    }
-
-    /**
-     * 导出渠道信息列表
-     */
-    @PreAuthorize("@ss.hasPermi('maintenance:channel:export')")
-    @Log(title = "渠道信息", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, @RequestParam(required = false) List<Integer> ids) {
-        List<SonyChannelExcelVO> list = sonyChannelService.selectSonyChannelListByIds(ids);
-        list.forEach(e -> {
-            // 填充二维码绝对路径
-            e.setQrCode(FileUtils.getQrCodePath(e.getChannelCode()));
-            e.setQrCodeWithLogo(FileUtils.getQrCodeWithLogoPath(e.getChannelCode()));
-        });
-        try {
-            FileUtils.export(response, "渠道信息", list);
-        } catch (Exception e) {
-            logger.error("导出渠道信息时出错了", e);
-            throw new ServiceException("导出渠道信息出错", HttpStatus.ERROR);
-        }
-    }
-
-    /**
-     * 获取渠道信息详细信息
-     */
-    @PreAuthorize("@ss.hasPermi('maintenance:channel:query')")
-    @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id) {
-        return success(sonyChannelService.selectSonyChannelById(id));
-    }
-
-    /**
-     * 新增渠道信息
-     */
-    @PreAuthorize("@ss.hasPermi('maintenance:channel:add')")
-    @Log(title = "渠道信息", businessType = BusinessType.INSERT)
-    @PostMapping("/add")
-    @Transactional
-    public AjaxResult add(@Valid @RequestBody SonyChannel sonyChannel) {
-        // 生成渠道代码. 规则: yyyyMMdd + 四位递增数字(每天凌晨重置为0000), 例: 202302050001
-        String yyyyMMdd = DateUtil.format(LocalDateTime.now(), "yyyyMMdd");
-        String dailyChannelNum;
-        Integer tmpDailyChannelNum;
-        try {
-            Integer channelCodeVal = redisCache.getCacheObject(redisUtils.getChannelCodeKey());
-            tmpDailyChannelNum = channelCodeVal;
-            AtomicInteger num = new AtomicInteger(channelCodeVal);
-            dailyChannelNum = String.format("%04d", num.incrementAndGet());
-            redisCache.setCacheObject(redisUtils.getChannelCodeKey(), num);
-        } catch (Exception e) {
-            logger.error("Redis获取当日渠道数出错");
-            throw new ServiceException("添加渠道失败", HttpStatus.ERROR);
-        }
-        String channelCode = String.format("%s%s", yyyyMMdd, dailyChannelNum);
-
-        // 保存渠道信息
-        sonyChannel.setChannelCode(channelCode);
-        sonyChannel.setCreatedBy(getUsername());
-        int id = sonyChannelService.insertSonyChannel(sonyChannel);
-
-        String qrCodeUrl = null;
-        try {
-            // 获取微信二维码跳转url
-            qrCodeUrl = qrCodeService.getQrCodeUrl(id);
-            sonyChannel.setQrcodeUrl(qrCodeUrl);
-            // 生成渠道码到指定位置
-            qrCodeService.saveQrCode(sonyChannel, channelCode);
-        } catch (WxErrorException e) {
-            // 抛异常需要恢复当天新增渠道数
-            redisCache.setCacheObject(redisUtils.getChannelCodeKey(), tmpDailyChannelNum);
-            logger.error("添加编号为{}的渠道获取微信accessToken出错", id, e);
-            throw new ServiceException("添加渠道失败", HttpStatus.ERROR);
-        } catch (IOException | WriterException e) {
-            // 抛异常需要恢复当天新增渠道数
-            redisCache.setCacheObject(redisUtils.getChannelCodeKey(), tmpDailyChannelNum);
-            logger.error("添加渠道 {} 生成渠道码出错", sonyChannel.getPrimaryChannel(), e);
-            throw new ServiceException("添加渠道失败", HttpStatus.ERROR);
-        }
-
-        // 更新该渠道qrCodeUrl
-        this.edit(sonyChannel);
-        logger.info("添加渠道 {} 成功. 渠道信息: {}", sonyChannel.getPrimaryChannel(), sonyChannel);
-        return toAjax(id);
-    }
-
-    /**
-     * 修改渠道信息
-     */
-    @PreAuthorize("@ss.hasPermi('maintenance:channel:edit')")
-    @Log(title = "渠道信息", businessType = BusinessType.UPDATE)
-    @PutMapping("update")
-    public AjaxResult edit(@RequestBody SonyChannel sonyChannel) {
-        sonyChannel.setUpdatedBy(getUsername());
-        return toAjax(sonyChannelService.updateSonyChannel(sonyChannel));
-    }
-
-    /**
-     * 删除渠道信息
-     */
-    @PreAuthorize("@ss.hasPermi('maintenance:channel:remove')")
-    @Log(title = "渠道信息", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable Long[] ids) {
-        return toAjax(sonyChannelService.deleteSonyChannelByIds(ids));
-    }
+	private final ISonyChannelService sonyChannelService;
+	
+	private final IWechatService wechatService;
+	
+	private final IQrCodeService qrCodeService;
+	
+	private final RedisCache redisCache;
+	
+	private final RedisUtils redisUtils;
+	
+	/**
+	 * 查询渠道信息列表
+	 */
+	@PreAuthorize("@ss.hasPermi('maintenance:channel:list')")
+	@GetMapping("/list")
+	public TableDataInfo list(SonyChannelDTO sonyChannel) {
+		startPage();
+		List<SonyChannelVO> list = sonyChannelService.selectSonyChannelListByDTO(sonyChannel);
+		List<SonyChannelVO> sonyChannelList = list.stream().filter(e -> e.getDelFlag() == 0).peek(e -> {
+            String channelCode = e.getChannelCode();
+            String qrCodePath = FileUtils.getQrCodePath(channelCode);
+            String qrCodeWithLogoPath = FileUtils.getQrCodeWithLogoPath(channelCode);
+		}).collect(Collectors.toList());
+		return getDataTable(sonyChannelList);
+	}
+	
+	/**
+	 * 导出渠道信息列表
+	 */
+	@PreAuthorize("@ss.hasPermi('maintenance:channel:export')")
+	@Log(title = "渠道信息", businessType = BusinessType.EXPORT)
+	@PostMapping("/export")
+	public void export(HttpServletResponse response, @RequestParam(required = false) List<Integer> ids) {
+		List<SonyChannelExcelVO> list = sonyChannelService.selectSonyChannelListByIds(ids);
+		list.forEach(e -> {
+			// 填充二维码绝对路径
+			e.setQrCode(FileUtils.getQrCodePath(e.getChannelCode()));
+			e.setQrCodeWithLogo(FileUtils.getQrCodeWithLogoPath(e.getChannelCode()));
+		});
+		try {
+			FileUtils.export(response, "渠道信息", list);
+		} catch (Exception e) {
+			logger.error("导出渠道信息时出错了", e);
+			throw new ServiceException("导出渠道信息出错", HttpStatus.ERROR);
+		}
+	}
+	
+	/**
+	 * 获取渠道信息详细信息
+	 */
+	@PreAuthorize("@ss.hasPermi('maintenance:channel:query')")
+	@GetMapping(value = "/{id}")
+	public AjaxResult getInfo(@PathVariable("id") Long id) {
+		return success(sonyChannelService.selectSonyChannelById(id));
+	}
+	
+	/**
+	 * 新增渠道信息
+	 */
+	@PreAuthorize("@ss.hasPermi('maintenance:channel:add')")
+	@Log(title = "渠道信息", businessType = BusinessType.INSERT)
+	@PostMapping("/add")
+	@Transactional
+	public AjaxResult add(@Valid @RequestBody SonyChannel sonyChannel) {
+		// 生成渠道代码. 规则: yyyyMMdd + 四位递增数字(每天凌晨重置为0000), 例: 202302050001
+		String yyyyMMdd = DateUtil.format(LocalDateTime.now(), "yyyyMMdd");
+		String dailyChannelNum;
+		Integer tmpDailyChannelNum;
+		try {
+			Integer channelCodeVal = redisCache.getCacheObject(redisUtils.getChannelCodeKey());
+			if (null == channelCodeVal) {
+				channelCodeVal = 0;
+			}
+			tmpDailyChannelNum = channelCodeVal;
+			AtomicInteger num = new AtomicInteger(channelCodeVal);
+			dailyChannelNum = String.format("%04d", num.incrementAndGet());
+			redisCache.setCacheObject(redisUtils.getChannelCodeKey(), num);
+		} catch (Exception e) {
+			logger.error("Redis获取当日渠道数出错");
+			throw new ServiceException("添加渠道失败", HttpStatus.ERROR);
+		}
+		String channelCode = String.format("%s%s", yyyyMMdd, dailyChannelNum);
+		
+		// 保存渠道信息
+		sonyChannel.setChannelCode(channelCode);
+		sonyChannel.setCreatedBy(getUsername());
+		int id = sonyChannelService.insertSonyChannel(sonyChannel);
+		
+		String qrCodeUrl = null;
+		try {
+			// 获取微信二维码跳转url
+			qrCodeUrl = qrCodeService.getQrCodeUrl(id);
+			sonyChannel.setQrcodeUrl(qrCodeUrl);
+			// 生成渠道码到指定位置
+			qrCodeService.saveQrCode(sonyChannel, channelCode);
+		} catch (WxErrorException e) {
+			// 抛异常需要恢复当天新增渠道数
+			redisCache.setCacheObject(redisUtils.getChannelCodeKey(), tmpDailyChannelNum);
+			logger.error("添加编号为{}的渠道获取微信accessToken出错", id, e);
+			throw new ServiceException("添加渠道失败", HttpStatus.ERROR);
+		} catch (IOException | WriterException e) {
+			// 抛异常需要恢复当天新增渠道数
+			redisCache.setCacheObject(redisUtils.getChannelCodeKey(), tmpDailyChannelNum);
+			logger.error("添加渠道 {} 生成渠道码出错", sonyChannel.getPrimaryChannel(), e);
+			throw new ServiceException("添加渠道失败", HttpStatus.ERROR);
+		}
+		
+		// 更新该渠道qrCodeUrl
+		this.edit(sonyChannel);
+		logger.info("添加渠道 {} 成功. 渠道信息: {}", sonyChannel.getPrimaryChannel(), sonyChannel);
+		return toAjax(id);
+	}
+	
+	/**
+	 * 修改渠道信息
+	 */
+	@PreAuthorize("@ss.hasPermi('maintenance:channel:edit')")
+	@Log(title = "渠道信息", businessType = BusinessType.UPDATE)
+	@PutMapping("update")
+	public AjaxResult edit(@RequestBody SonyChannel sonyChannel) {
+		sonyChannel.setUpdatedBy(getUsername());
+		return toAjax(sonyChannelService.updateSonyChannel(sonyChannel));
+	}
+	
+	/**
+	 * 删除渠道信息
+	 */
+	@PreAuthorize("@ss.hasPermi('maintenance:channel:remove')")
+	@Log(title = "渠道信息", businessType = BusinessType.DELETE)
+	@DeleteMapping("/{ids}")
+	public AjaxResult remove(@PathVariable Long[] ids) {
+		int rows = sonyChannelService.batchUpdateSonyChannel(ids);
+		return toAjax(rows);
+	}
+	
+	/**
+	 * 获取一级渠道
+	 */
+	@GetMapping("/primary")
+	public AjaxResult getPrimaryChannel() {
+		List<SonyChannel> list = sonyChannelService.selectSonyChannelList(new SonyChannel());
+		if (list.isEmpty()) {
+			return success();
+		}
+		List<String> sonyChannelNameList = list.stream()
+				.map(SonyChannel::getPrimaryChannel)
+				.distinct()
+				.collect(Collectors.toList());
+		return success(sonyChannelNameList);
+	}
+	
+	/**
+	 * 获取二级渠道
+	 */
+	@GetMapping("/secondary")
+	public AjaxResult getSecondaryChannel() {
+		List<SonyChannel> list = sonyChannelService.selectSonyChannelList(new SonyChannel());
+		if (list.isEmpty()) {
+			return success();
+		}
+		List<String> sonyChannelNameList = list.stream()
+				.map(SonyChannel::getSecondaryChannel)
+				.filter(e -> !e.isEmpty())
+				.distinct()
+				.collect(Collectors.toList());
+		return success(sonyChannelNameList);
+	}
 }

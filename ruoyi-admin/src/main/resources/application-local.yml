@@ -9,10 +9,11 @@ ruoyi:
   # 实例演示开关
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-#  profile: D:\projects\ruoyi\pictures
-  profile: E:\projects\isoft\code\maintenance\qrcode
+  profile: D:\projects\ruoyi\pictures
+#  profile: E:\projects\isoft\code\maintenance\qrcode
   # 存放logo的地址
-  logoPath: E:\projects\isoft\code\maintenance\qrcode\upload\logo
+  logoPath: D:\projects\ruoyi\pictures\upload\logo
+#  logoPath: E:\projects\isoft\code\maintenance\qrcode\upload\logo
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
