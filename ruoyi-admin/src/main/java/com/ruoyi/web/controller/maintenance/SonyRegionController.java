@@ -3,7 +3,6 @@ package com.ruoyi.web.controller.maintenance;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.maintenance.domain.SonyRegion;
@@ -14,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 省市关系Controller
@@ -33,11 +34,35 @@ public class SonyRegionController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('maintenance:region:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SonyRegion sonyRegion)
+    public AjaxResult list(SonyRegion sonyRegion)
     {
-        startPage();
         List<SonyRegion> list = sonyRegionService.selectSonyRegionList(sonyRegion);
-        return getDataTable(list);
+        Map<String, List<SonyRegion>> parentIdToSonyRegionMap = list.stream().collect(Collectors.groupingBy(SonyRegion::getRegionParentId));
+        list.forEach(region -> {
+            String parentRegionId = region.getRegionId();
+            List<SonyRegion> children = parentIdToSonyRegionMap.get(parentRegionId);
+            region.setChildren(children);
+        });
+        return success(list);
+    }
+
+    /**
+     * 查询所有省
+     */
+    @GetMapping("/province")
+    public AjaxResult getProvinces() {
+        SonyRegion sonyRegion = new SonyRegion();
+        sonyRegion.setRegionParentId("-1");
+        List<SonyRegion> sonyRegionList = sonyRegionService.selectSonyRegionList(sonyRegion);
+        return success(sonyRegionList);
+    }
+
+    /**
+     * 根据regionId查省下面的子级辖区
+     */
+    @GetMapping("city")
+    public AjaxResult getCities(String regionId) {
+        return success(sonyRegionService.selectSonyRegionListByParentRegionId(regionId));
     }
 
     /**

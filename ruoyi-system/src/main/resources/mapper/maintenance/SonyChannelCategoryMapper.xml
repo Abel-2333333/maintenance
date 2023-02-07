@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.maintenance.mapper.SonyChannelCategoryMapper">
+    
+    <resultMap type="SonyChannelCategory" id="SonyChannelCategoryResult">
+        <result property="id"    column="id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="channelName"    column="channel_name"    />
+    </resultMap>
+
+    <sql id="selectSonyChannelCategoryVo">
+        select id, parent_id, channel_name from sony_channel_category
+    </sql>
+
+    <select id="selectSonyChannelCategoryList" parameterType="SonyChannelCategory" resultMap="SonyChannelCategoryResult">
+        <include refid="selectSonyChannelCategoryVo"/>
+        <where>  
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="channelName != null  and channelName != ''"> and channel_name like concat('%', #{channelName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSonyChannelCategoryById" parameterType="Long" resultMap="SonyChannelCategoryResult">
+        <include refid="selectSonyChannelCategoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSonyChannelCategory" parameterType="SonyChannelCategory" useGeneratedKeys="true" keyProperty="id">
+        insert into sony_channel_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">parent_id,</if>
+            <if test="channelName != null and channelName != ''">channel_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="parentId != null">#{parentId},</if>
+            <if test="channelName != null and channelName != ''">#{channelName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSonyChannelCategory" parameterType="SonyChannelCategory">
+        update sony_channel_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="channelName != null and channelName != ''">channel_name = #{channelName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSonyChannelCategoryById" parameterType="Long">
+        delete from sony_channel_category where id = #{id}
+    </delete>
+
+    <delete id="deleteSonyChannelCategoryByIds" parameterType="String">
+        delete from sony_channel_category where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectChannelList" resultType="com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO">
+        <include refid="selectSonyChannelCategoryVo"/>
+        <where>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="channelName != null  and channelName != ''"> and channel_name like concat('%', #{channelName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectSecondaryChannelList" resultType="com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO">
+        <include refid="selectSonyChannelCategoryVo"/>
+        where parent_id != -1
+    </select>
+</mapper>

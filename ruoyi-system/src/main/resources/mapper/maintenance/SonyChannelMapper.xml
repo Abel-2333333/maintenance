@@ -23,6 +23,26 @@
         <result property="updatedBy" column="updated_by"/>
     </resultMap>
 
+    <resultMap type="SonyChannelVO" id="SonyChannelResult2">
+        <result property="id" column="id"/>
+        <result property="primaryChannel" column="primary_channel"/>
+        <result property="secondaryChannel" column="secondary_channel"/>
+        <result property="channelCode" column="channel_code"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="maintenanceStationName" column="maintenance_station_name"/>
+        <result property="maintenanceStationCode" column="maintenance_station_code"/>
+        <result property="storeName" column="store_name"/>
+        <result property="storeCode" column="store_code"/>
+        <result property="remark" column="remark"/>
+        <result property="qrcodeUrl" column="qrcode_url"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="updatedBy" column="updated_by"/>
+    </resultMap>
+
     <sql id="selectSonyChannelVo">
         select id,
                primary_channel,
@@ -87,7 +107,7 @@
         </where>
     </select>
 
-    <select id="selectSonyChannelListByDTO" parameterType="SonyChannelVO" resultMap="SonyChannelResult">
+    <select id="selectSonyChannelListByDTO" parameterType="SonyChannelDTO" resultMap="SonyChannelResult2">
         <include refid="selectSonyChannelVo"/>
         <where>
             <if test="primaryChannel != null  and primaryChannel != ''">

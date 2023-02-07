@@ -59,4 +59,6 @@ public interface ISonyRegionService
      * @return 结果
      */
     public int deleteSonyRegionById(Long id);
+
+    List<SonyRegion> selectSonyRegionListByParentRegionId(String regionId);
 }

@@ -51,6 +51,14 @@ public class FileUtils<T> {
         return channelCode + "_logo" + "." + QrCodeGenerator.IMAGE_TYPE_PNG;
     }
 
+    public static String getQrCodeUrl(String channelCode) {
+        return RuoYiConfig.getImagePath() + getQrCodeName(channelCode);
+    }
+
+    public static String getQrCodeWithLogoUrl(String channelCode) {
+        return RuoYiConfig.getImagePath() + getQrCodeWithLogoName(channelCode);
+    }
+
     /**
      * @param response HttpServletResponse
      * @param sheetName 工作页名

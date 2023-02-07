@@ -91,4 +91,11 @@ public class SonyRegionServiceImpl implements ISonyRegionService
     {
         return sonyRegionMapper.deleteSonyRegionById(id);
     }
+
+    @Override
+    public List<SonyRegion> selectSonyRegionListByParentRegionId(String regionId) {
+        SonyRegion sonyRegion = new SonyRegion();
+        sonyRegion.setRegionParentId(regionId);
+        return sonyRegionMapper.selectSonyRegionList(sonyRegion);
+    }
 }

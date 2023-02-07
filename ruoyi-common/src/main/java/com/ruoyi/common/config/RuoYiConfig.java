@@ -32,6 +32,11 @@ public class RuoYiConfig
      */
     private static String logoPath;
 
+    /**
+     * 二维码存放位置
+     */
+    private static String imagePath;
+
     /** 获取地址开关 */
     private static boolean addressEnabled;
 
@@ -96,6 +101,14 @@ public class RuoYiConfig
         RuoYiConfig.profile = profile;
     }
 
+    public static String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        RuoYiConfig.imagePath = imagePath;
+    }
+
     public static boolean isAddressEnabled()
     {
         return addressEnabled;
@@ -151,5 +164,9 @@ public class RuoYiConfig
      */
     public static String getLogo() {
         return getLogoPath()+ "/logo.jpg";
+    }
+
+    public static String getQrCodePath() {
+        return getImagePath();
     }
 }

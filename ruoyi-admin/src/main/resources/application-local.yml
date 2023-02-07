@@ -14,6 +14,8 @@ ruoyi:
   # 存放logo的地址
 #  logoPath: D:\projects\ruoyi\pictures\upload\logo
   logoPath: E:\projects\isoft\code\maintenance\qrcode\upload\logo
+  # 二维码线上地址
+  imagePath: http://fp.issdms.com/image/
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证

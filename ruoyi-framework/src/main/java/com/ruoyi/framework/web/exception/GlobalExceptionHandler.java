@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,5 +128,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(WxErrorException.class)
     public AjaxResult handleWxErrorException(WxErrorException e) {
         return AjaxResult.error("微信服务异常");
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public AjaxResult handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e) {
+        return AjaxResult.error("名字重复");
     }
 }

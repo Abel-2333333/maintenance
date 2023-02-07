@@ -1,9 +1,10 @@
 package com.ruoyi.maintenance.domain;
 
 import com.ruoyi.common.annotation.Excel;
-import com.ruoyi.common.core.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.List;
 
 /**
  * 省市关系对象 sony_region
@@ -11,7 +12,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author Abel
  * @date 2023-02-01
  */
-public class SonyRegion extends BaseEntity
+public class SonyRegion
 {
     private static final long serialVersionUID = 1L;
 
@@ -33,6 +34,9 @@ public class SonyRegion extends BaseEntity
     /** 地区名 */
     @Excel(name = "地区名")
     private String regionName;
+
+    @Excel(name = "子级辖区")
+    private List<SonyRegion> children;
 
     public void setId(Long id) 
     {
@@ -78,6 +82,14 @@ public class SonyRegion extends BaseEntity
     public String getRegionName() 
     {
         return regionName;
+    }
+
+    public List<SonyRegion> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<SonyRegion> children) {
+        this.children = children;
     }
 
     @Override
