@@ -32,6 +32,7 @@ import javax.validation.Valid;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -152,7 +153,7 @@ public class SonyChannelController extends BaseController {
     @GetMapping("/names")
     public AjaxResult getStationNames() {
         List<SonyChannel> list = sonyChannelService.selectSonyChannelList(new SonyChannel());
-        List<String> stationNameList = list.stream().map(SonyChannel::getMaintenanceStationName).distinct().collect(Collectors.toList());
+        List<String> stationNameList = list.stream().map(SonyChannel::getMaintenanceStationName).distinct().filter(Objects::nonNull).collect(Collectors.toList());
         return success(stationNameList);
     }
 
@@ -181,7 +182,7 @@ public class SonyChannelController extends BaseController {
      * 批量导入
      */
     @PostMapping("/upload")
-    public AjaxResult upload(MultipartFile file) throws IOException {
+    public AjaxResult upload(@RequestParam("file") MultipartFile file) throws IOException {
         EasyExcelFactory.read(file.getInputStream(), SonyChannelImportVO.class,
                 new SonyChannelListener(sonyChannelService, executor)).sheet().doRead();
         return success();
@@ -194,7 +195,7 @@ public class SonyChannelController extends BaseController {
     @PreAuthorize("@ss.hasPermi('maintenance:channel:export')")
     @Log(title = "渠道信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, @RequestParam(required = false) List<Integer> ids) {
+    public void export(HttpServletResponse response, @RequestBody(required = false) List<Integer> ids) {
         List<SonyChannelExcelVO> list = sonyChannelService.selectSonyChannelListByIds(ids);
         list.forEach(e -> {
             // 填充二维码绝对路径

@@ -2,7 +2,6 @@ spring:
   profiles:
 #    本地环境
     include: local, druid
-#    开发环境
 #    include: dev, druid-dev
 #      生产环境
 #      include: prod, druid-prod

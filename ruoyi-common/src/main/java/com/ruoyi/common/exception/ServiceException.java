@@ -25,6 +25,8 @@ public final class ServiceException extends RuntimeException
      * 和 {@link CommonResult#getDetailMessage()} 一致的设计
      */
     private String detailMessage;
+    
+    private Throwable cause;
 
     /**
      * 空构造方法，避免反序列化问题
@@ -37,10 +39,35 @@ public final class ServiceException extends RuntimeException
     {
         this.message = message;
     }
+    
+    public ServiceException(boolean expression, String message)
+    {
+        if (expression) {
+            throw new ServiceException(message);
+        }
+    }
+    
+    public ServiceException(boolean expression, String message, Integer code)
+    {
+        if (expression) {
+            throw new ServiceException(message, code);
+        }
+    }
 
     public ServiceException(String message, Integer code)
     {
         this.message = message;
+        this.code = code;
+    }
+    
+    public ServiceException(String message, Throwable cause) {
+        this.message = message;
+        this.cause = cause;
+    }
+    
+    public ServiceException(String message, Throwable cause, Integer code) {
+        this.message = message;
+        this.cause = cause;
         this.code = code;
     }
 

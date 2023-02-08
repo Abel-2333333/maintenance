@@ -1,6 +1,8 @@
 package com.ruoyi.maintenance.service;
 
 import com.ruoyi.maintenance.domain.SonyChannelCategory;
+import com.ruoyi.maintenance.domain.dto.SonyChannelCategoryDTO;
+import com.ruoyi.maintenance.domain.vo.SonyChannelCategoryIndexVO;
 import com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO;
 
 import java.util.List;
@@ -19,7 +21,7 @@ public interface ISonyChannelCategoryService
      * @param id 渠道关系主键
      * @return 渠道关系
      */
-    public SonyChannelCategory selectSonyChannelCategoryById(Long id);
+    public SonyChannelCategory selectSonyChannelCategoryById(Integer id);
 
     /**
      * 查询渠道关系列表
@@ -35,7 +37,7 @@ public interface ISonyChannelCategoryService
      * @param sonyChannelCategory 渠道关系
      * @return 结果
      */
-    public int insertSonyChannelCategory(SonyChannelCategory sonyChannelCategory);
+    public void insertSonyChannelCategory(SonyChannelCategory sonyChannelCategory);
 
     /**
      * 修改渠道关系
@@ -64,4 +66,10 @@ public interface ISonyChannelCategoryService
     List<SonyChannelCategoryVO> selectChannelList(SonyChannelCategory sonyChannelCategory);
 
     List<SonyChannelCategoryVO> selectSecondaryChannelList(SonyChannelCategory sonyChannelCategory);
+	
+	void deleteSonyChannelCategoryByChannelName(String channelName);
+    
+    List<SonyChannelCategoryVO> selectChannelListByChannelName(String channelName);
+    
+    List<SonyChannelCategoryIndexVO> selectChannelCategoryListByChannelCategoryDTO(SonyChannelCategoryDTO dto);
 }
