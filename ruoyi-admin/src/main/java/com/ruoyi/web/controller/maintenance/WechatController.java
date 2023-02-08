@@ -11,7 +11,6 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -128,12 +127,5 @@ public class WechatController {
             log.error("路由消息时出现异常！", e);
         }
         return null;
-    }
-
-    public static void main(String[] args) {
-        File file = new File("usr/java/upload");
-        if (!file.isDirectory()) {
-            file.mkdir();
-        }
     }
 }
