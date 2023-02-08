@@ -2,6 +2,7 @@ package com.ruoyi.maintenance.mapper;
 
 import com.ruoyi.maintenance.domain.SonyChannelCategory;
 import com.ruoyi.maintenance.domain.dto.SonyChannelCategoryDTO;
+import com.ruoyi.maintenance.domain.excel.SonyChannelCategoryExportVO;
 import com.ruoyi.maintenance.domain.vo.SonyChannelCategoryIndexVO;
 import com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO;
 import org.apache.ibatis.annotations.Param;
@@ -54,7 +55,7 @@ public interface SonyChannelCategoryMapper
      * @param id 渠道关系主键
      * @return 结果
      */
-    public int deleteSonyChannelCategoryById(Long id);
+    public int deleteSonyChannelCategoryById(Integer id);
 
     /**
      * 批量删除渠道关系
@@ -62,7 +63,7 @@ public interface SonyChannelCategoryMapper
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
-    public int deleteSonyChannelCategoryByIds(Long[] ids);
+    public int deleteSonyChannelCategoryByIds(List<Integer> ids);
 
     List<SonyChannelCategoryVO> selectChannelList(SonyChannelCategory sonyChannelCategory);
 
@@ -72,11 +73,15 @@ public interface SonyChannelCategoryMapper
     
     SonyChannelCategoryIndexVO selectSonyChannelCategoryIndexVOByChannelName(String channelName);
     
-    List<SonyChannelCategory> selectChannelListByIds(Long[] ids);
+    List<SonyChannelCategory> selectChannelListByIds(Integer[] ids);
     
     SonyChannelCategory selectSonyChannelCategoryByChannelName(@Param("channelName") String channelName);
     
     SonyChannelCategoryVO selectChannelCategoryByChannelName(@Param("channelName") String channelName);
     
     List<SonyChannelCategoryIndexVO> selectChannelCategoryListByChannelCategoryDTO(SonyChannelCategoryDTO dto);
+
+    List<Integer> selectChannelListByParentId(List<Integer> ids);
+
+    List<SonyChannelCategoryExportVO> selectSonyChannelCategoryIndexVOByIds(List<Integer> ids);
 }

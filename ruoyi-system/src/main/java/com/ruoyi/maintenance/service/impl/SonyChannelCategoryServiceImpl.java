@@ -4,8 +4,10 @@ import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.wechat.exception.ExceptionAssert;
+import com.ruoyi.maintenance.domain.SonyChannel;
 import com.ruoyi.maintenance.domain.SonyChannelCategory;
 import com.ruoyi.maintenance.domain.dto.SonyChannelCategoryDTO;
+import com.ruoyi.maintenance.domain.excel.SonyChannelCategoryExportVO;
 import com.ruoyi.maintenance.domain.vo.SonyChannelCategoryIndexVO;
 import com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO;
 import com.ruoyi.maintenance.mapper.SonyChannelCategoryMapper;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 渠道关系Service业务层处理
@@ -89,13 +92,11 @@ public class SonyChannelCategoryServiceImpl implements ISonyChannelCategoryServi
 	 * @return 结果
 	 */
 	@Override
-	public int deleteSonyChannelCategoryByIds(Long[] ids) {
-		List<SonyChannelCategory> sonyChannelCategoryList = sonyChannelCategoryMapper.selectChannelListByIds(ids);
-		boolean notPrimaryChannel = sonyChannelCategoryList.stream().anyMatch(e -> e.getParentId() != -1);
-		if (notPrimaryChannel) {
-			throw new ServiceException("渠道中包含二级渠道", HttpStatus.ERROR);
-		}
-		return sonyChannelCategoryMapper.deleteSonyChannelCategoryByIds(ids);
+	public int deleteSonyChannelCategoryByIds(List<Integer> ids) {
+		List<Integer> idList = sonyChannelCategoryMapper.selectChannelListByParentId(ids);
+		idList.addAll(ids);
+		List<Integer> list = idList.stream().distinct().collect(Collectors.toList());
+		return sonyChannelCategoryMapper.deleteSonyChannelCategoryByIds(list);
 	}
 	
 	/**
@@ -105,7 +106,7 @@ public class SonyChannelCategoryServiceImpl implements ISonyChannelCategoryServi
 	 * @return 结果
 	 */
 	@Override
-	public int deleteSonyChannelCategoryById(Long id) {
+	public int deleteSonyChannelCategoryById(Integer id) {
 		return sonyChannelCategoryMapper.deleteSonyChannelCategoryById(id);
 	}
 	
@@ -149,4 +150,21 @@ public class SonyChannelCategoryServiceImpl implements ISonyChannelCategoryServi
 	public List<SonyChannelCategoryIndexVO> selectChannelCategoryListByChannelCategoryDTO(SonyChannelCategoryDTO dto) {
 		return  sonyChannelCategoryMapper.selectChannelCategoryListByChannelCategoryDTO(dto);
 	}
+
+	@Override
+	public void checkChannelName(SonyChannel sonyChannel) {
+		// 渠道存在校验
+		SonyChannelCategory primaryChannelCategory = sonyChannelCategoryMapper.selectSonyChannelCategoryByChannelName(sonyChannel.getPrimaryChannel());
+		ExceptionAssert.throwException(primaryChannelCategory == null, "一级渠道不存在");
+		String secondaryChannel = sonyChannel.getSecondaryChannel();
+		if (secondaryChannel != null) {
+			SonyChannelCategory secondaryChannelCategory = sonyChannelCategoryMapper.selectSonyChannelCategoryByChannelName(secondaryChannel);
+			ExceptionAssert.throwException(secondaryChannelCategory == null, "二级渠道不存在");
+		}
+	}
+
+    @Override
+    public List<SonyChannelCategoryExportVO> selectSonyChannelCategoryIndexVOByIds(List<Integer> ids) {
+		return sonyChannelCategoryMapper.selectSonyChannelCategoryIndexVOByIds(ids);
+    }
 }

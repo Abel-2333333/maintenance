@@ -1,68 +1,114 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.maintenance.mapper.SonyChannelCategoryMapper">
-    
-    <resultMap type="SonyChannelCategory" id="SonyChannelCategoryResult">
-        <result property="id"    column="id"    />
-        <result property="parentId"    column="parent_id"    />
-        <result property="channelName"    column="channel_name"    />
-        <result property="createdBy" column="created_by" />
-        <result property="createTime" column="create_time" />
+    <resultMap type="com.ruoyi.maintenance.domain.SonyChannelCategory" id="SonyChannelCategoryResult">
+        <result property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="channelName" column="channel_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="deletedAt" column="deleted_at"/>
     </resultMap>
 
     <sql id="selectSonyChannelCategoryVo">
-        select id, parent_id, channel_name, created_by, create_time from sony_channel_category
+        select id, parent_id, channel_name, create_time, created_by, deleted_at
+        from sony_channel_category
     </sql>
 
-    <select id="selectSonyChannelCategoryList" parameterType="SonyChannelCategory" resultMap="SonyChannelCategoryResult">
+    <select id="selectSonyChannelCategoryList" parameterType="com.ruoyi.maintenance.domain.SonyChannelCategory"
+            resultMap="SonyChannelCategoryResult">
         <include refid="selectSonyChannelCategoryVo"/>
-        <where>  
-            <if test="parentId != null "> and parent_id = #{parentId}</if>
-            <if test="channelName != null  and channelName != ''"> and channel_name like concat('%', #{channelName}, '%')</if>
+        <where>
+            <if test="parentId != null">
+                and parent_id = #{parentId}
+            </if>
+            <if test="channelName != null  and channelName != ''">
+                and channel_name like concat('%', #{channelName}, '%')
+            </if>
+            and deleted_at IS NULL
         </where>
     </select>
-    
-    <select id="selectSonyChannelCategoryById" parameterType="Integer" resultMap="SonyChannelCategoryResult">
+
+    <select id="selectSonyChannelCategoryById" parameterType="Long" resultMap="SonyChannelCategoryResult">
         <include refid="selectSonyChannelCategoryVo"/>
         where id = #{id}
+          and deleted_at is null
     </select>
-        
-    <insert id="insertSonyChannelCategory" parameterType="SonyChannelCategory" useGeneratedKeys="true" keyProperty="id">
+
+    <insert id="insertSonyChannelCategory" parameterType="com.ruoyi.maintenance.domain.SonyChannelCategory"
+            useGeneratedKeys="true" keyProperty="id">
         insert into sony_channel_category
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="parentId != null">parent_id,</if>
-            <if test="channelName != null and channelName != ''">channel_name,</if>
-            <if test="createdBy != null and createdBy != ''">created_by,</if>
-            <if test="createTime != null ">create_time,</if>
-         </trim>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="channelName != null and channelName != ''">
+                channel_name,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createdBy != null">
+                created_by,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="parentId != null">#{parentId},</if>
-            <if test="channelName != null and channelName != ''">#{channelName},</if>
-            <if test="createdBy != null and createdBy != ''">#{createdBy},</if>
-            <if test="createTime != null ">#{createTime},</if>
-         </trim>
+            <if test="parentId != null">
+                #{parentId},
+            </if>
+            <if test="channelName != null and channelName != ''">
+                #{channelName},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="createdBy != null">
+                #{createdBy},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt},
+            </if>
+        </trim>
     </insert>
 
-    <update id="updateSonyChannelCategory" parameterType="SonyChannelCategory">
+    <update id="updateSonyChannelCategory" parameterType="com.ruoyi.maintenance.domain.SonyChannelCategory">
         update sony_channel_category
         <trim prefix="SET" suffixOverrides=",">
-            <if test="parentId != null">#{parentId},</if>
-            <if test="channelName != null and channelName != ''">#{channelName},</if>
-            <if test="createBy != null and createBy != ''">#{createBy},</if>
-            <if test="createTime != null ">#{createTime},</if>
+            <if test="parentId != null">
+                parent_id = #{parentId},
+            </if>
+            <if test="channelName != null and channelName != ''">
+                channel_name = #{channelName},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt},
+            </if>
         </trim>
         where id = #{id}
+          and deleted_at is null
     </update>
 
     <delete id="deleteSonyChannelCategoryById" parameterType="Integer">
-        delete from sony_channel_category where id = #{id}
+        update sony_channel_category
+        set deleted_at=now()
+        where id = #{id}
     </delete>
 
-    <delete id="deleteSonyChannelCategoryByIds" parameterType="String">
-        delete from sony_channel_category where id in 
-        <foreach item="id" collection="array" open="(" separator="," close=")">
+    <delete id="deleteSonyChannelCategoryByIds" parameterType="Integer">
+        update sony_channel_category
+        set deleted_at=now()where id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
@@ -70,20 +116,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectChannelList" resultType="com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO">
         <include refid="selectSonyChannelCategoryVo"/>
         <where>
-            <if test="parentId != null "> and parent_id = #{parentId}</if>
-            <if test="channelName != null  and channelName != ''"> and channel_name like concat('%', #{channelName}, '%')</if>
-            <if test="createdBy != null and createdBy != ''">#{createdBy},</if>
-            <if test="createTime != null ">#{createTime},</if>
+            <if test="parentId != null">
+                and parent_id = #{parentId}
+            </if>
+            <if test="channelName != null  and channelName != ''">
+                and channel_name like concat('%', #{channelName}, '%')
+            </if>
+            and deleted_at is null
         </where>
     </select>
 
     <select id="selectSecondaryChannelList" resultType="com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO">
         <include refid="selectSonyChannelCategoryVo"/>
         where parent_id != -1
+          and deleted_at is null
     </select>
 
+
     <delete id="deleteSonyChannelCategoryByChannelName">
-        delete from sony_channel_category where channel_name = #{channelName}
+        update sony_channel_category
+         set deleted_at = now()
+        where channel_name = #{channelName}
     </delete>
 
     <sql id="selectSonyChannelCategoryIndexVo">
@@ -95,7 +148,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectSonyChannelCategoryIndexVOByChannelName"
             resultType="com.ruoyi.maintenance.domain.vo.SonyChannelCategoryIndexVO">
         <include refid="selectSonyChannelCategoryIndexVo"/>
-        where a.parent_id = -1 and a.channel_name = #{channelName};
+        where a.parent_id = -1
+          and a.channel_name =
+              #{channelName}
+          and a.deleted_at is null
+          and b.deleted_at is null
     </select>
 
     <select id="selectChannelListByIds" resultType="com.ruoyi.maintenance.domain.SonyChannelCategory">
@@ -104,20 +161,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+        and deleted_at is null
     </select>
 
     <select id="selectSonyChannelCategoryByChannelName" resultType="com.ruoyi.maintenance.domain.SonyChannelCategory">
         <include refid="selectSonyChannelCategoryVo"/>
         <where>
-            <if test="channelName != null  and channelName != ''"> and channel_name =#{channelName}</if>
+            <if test="channelName != null  and channelName != ''">
+                and channel_name = #{channelName}
+            </if>
         </where>
+        and deleted_at is null
     </select>
 
     <select id="selectChannelCategoryByChannelName" resultType="com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO">
         <include refid="selectSonyChannelCategoryVo"/>
         <where>
-            <if test="channelName != null  and channelName != ''"> and channel_name =#{channelName}</if>
+            <if test="channelName != null  and channelName != ''">
+                and channel_name = #{channelName}
+            </if>
         </where>
+        and deleted_at is null
     </select>
 
     <select id="selectChannelCategoryListByChannelCategoryDTO"
@@ -130,7 +194,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and a.channel_name = #{primaryChannel}
         </if>
         <if test="secondaryChannel != null and secondaryChannel != ''">
-            and b.channel_name=#{secondaryChannel}
+            and b.channel_name = #{secondaryChannel}
         </if>
+        and a.deleted_at is null
+        and b.deleted_at is null
+    </select>
+
+    <select id="selectChannelListByParentId" resultType="java.lang.Integer">
+        select id from sony_channel_category where parent_id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        and deleted_at is null
+    </select>
+
+    <select id="selectSonyChannelCategoryIndexVOByIds"
+            resultType="com.ruoyi.maintenance.domain.excel.SonyChannelCategoryExportVO">
+        select b.id, a.channel_name primary_name, b.parent_id, b.channel_name secondary_name, b.create_time
+        from sony_channel_category a
+                 left join sony_channel_category b on a.id = b.parent_id
+        where b.parent_id != -1
+        <if test="list != null and list.size() != 0">
+            and b.id in
+            <foreach item="id" collection="list" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        and a.deleted_at is null
+        and b.deleted_at is null
     </select>
 </mapper>

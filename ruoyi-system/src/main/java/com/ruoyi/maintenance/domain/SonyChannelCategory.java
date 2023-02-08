@@ -34,6 +34,9 @@ public class SonyChannelCategory extends BaseEntity
     @Excel(name = "创建时间")
     private Date createTime;
 
+    @Excel(name = "创建时间")
+    private Date deletedAt;
+
     public void setId(Integer id)
     {
         this.id = id;
@@ -78,7 +81,15 @@ public class SonyChannelCategory extends BaseEntity
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
-    
+
+    public Date getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Date deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)

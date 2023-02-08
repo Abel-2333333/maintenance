@@ -1,13 +1,16 @@
 package com.ruoyi.web.controller.maintenance;
 
 import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.wechat.util.FileUtils;
 import com.ruoyi.maintenance.domain.SonyChannelCategory;
 import com.ruoyi.maintenance.domain.dto.SonyChannelCategoryDTO;
+import com.ruoyi.maintenance.domain.excel.SonyChannelCategoryExportVO;
 import com.ruoyi.maintenance.domain.vo.SonyChannelCategoryIndexVO;
 import com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO;
 import com.ruoyi.maintenance.service.ISonyChannelCategoryService;
@@ -83,13 +86,24 @@ public class SonyChannelCategoryController extends BaseController {
 		List<SonyChannelCategoryIndexVO> list = sonyChannelCategoryService.selectChannelCategoryListByChannelCategoryDTO(dto);
 		return getDataTable(list);
 	}
+
+	/**
+	 * 新增渠道关系
+	 */
+	@PreAuthorize("@ss.hasPermi('maintenance:channelCategory:add')")
+	@Log(title = "渠道关系", businessType = BusinessType.INSERT)
+	@PostMapping("/add")
+	public AjaxResult add(@RequestBody SonyChannelCategory sonyChannelCategory) {
+		sonyChannelCategoryService.insertSonyChannelCategory(sonyChannelCategory);
+		return success();
+	}
 	
 	/**
 	 * 根据渠道id删除渠道
 	 */
-	@GetMapping("/remove")
-	public AjaxResult delete(@RequestBody List<Integer> ids) {
-//		sonyChannelCategoryService.deleteSonyChannelCategoryByChannelName(channelName);
+	@PostMapping("/remove")
+	public AjaxResult deletePrimaryChannel(@RequestBody List<Integer> ids) {
+		sonyChannelCategoryService.deleteSonyChannelCategoryByIds(ids);
 		return success();
 	}
 	
@@ -103,17 +117,6 @@ public class SonyChannelCategoryController extends BaseController {
 	}
 	
 	/**
-	 * 新增渠道关系
-	 */
-	@PreAuthorize("@ss.hasPermi('maintenance:channelCategory:add')")
-	@Log(title = "渠道关系", businessType = BusinessType.INSERT)
-	@PostMapping("/add")
-	public AjaxResult add(@RequestBody SonyChannelCategory sonyChannelCategory) {
-		sonyChannelCategoryService.insertSonyChannelCategory(sonyChannelCategory);
-		return success();
-	}
-	
-	/**
 	 * 修改渠道关系
 	 */
 	@PreAuthorize("@ss.hasPermi('maintenance:channelCategory:edit')")
@@ -124,24 +127,18 @@ public class SonyChannelCategoryController extends BaseController {
 	}
 	
 	/**
-	 * 删除渠道关系
-	 */
-	@PreAuthorize("@ss.hasPermi('maintenance:channelCategory:remove')")
-	@Log(title = "渠道关系", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-	public AjaxResult remove(@PathVariable Long[] ids) {
-		return toAjax(sonyChannelCategoryService.deleteSonyChannelCategoryByIds(ids));
-	}
-	
-	/**
 	 * 导出渠道关系列表
 	 */
 	@PreAuthorize("@ss.hasPermi('maintenance:channelCategory:export')")
 	@Log(title = "渠道关系", businessType = BusinessType.EXPORT)
 	@PostMapping("/export")
-	public void export(HttpServletResponse response, SonyChannelCategory sonyChannelCategory) {
-		List<SonyChannelCategory> list = sonyChannelCategoryService.selectSonyChannelCategoryList(sonyChannelCategory);
-		ExcelUtil<SonyChannelCategory> util = new ExcelUtil<>(SonyChannelCategory.class);
-		util.exportExcel(response, list, "渠道关系数据");
+	public void export(HttpServletResponse response, /*@RequestBody(required = false)*/ @RequestParam(required = false) List<Integer> ids)  {
+		List<SonyChannelCategoryExportVO> list = sonyChannelCategoryService.selectSonyChannelCategoryIndexVOByIds(ids);
+		try {
+			FileUtils.export(response, "渠道维护", list);
+		} catch (Exception e) {
+			logger.error("导出渠道关系表时出错", e);
+			throw new ServiceException("导出渠道关系表出错", HttpStatus.ERROR);
+		}
 	}
 }

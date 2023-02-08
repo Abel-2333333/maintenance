@@ -10,7 +10,6 @@ import com.ruoyi.common.wechat.exception.ExceptionAssert;
 import com.ruoyi.common.wechat.util.RedisUtils;
 import com.ruoyi.common.wechat.util.StringUtils;
 import com.ruoyi.maintenance.domain.SonyChannel;
-import com.ruoyi.maintenance.domain.SonyChannelCategory;
 import com.ruoyi.maintenance.domain.dto.SonyChannelDTO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelExcelVO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelImportVO;
@@ -18,6 +17,7 @@ import com.ruoyi.maintenance.domain.vo.SonyChannelVO;
 import com.ruoyi.maintenance.mapper.SonyChannelCategoryMapper;
 import com.ruoyi.maintenance.mapper.SonyChannelMapper;
 import com.ruoyi.maintenance.service.IQrCodeService;
+import com.ruoyi.maintenance.service.ISonyChannelCategoryService;
 import com.ruoyi.maintenance.service.ISonyChannelService;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.slf4j.Logger;
@@ -52,6 +52,9 @@ public class SonyChannelServiceImpl implements ISonyChannelService {
 	private IQrCodeService qrCodeService;
 	@Resource
 	private SonyChannelCategoryMapper sonyChannelCategoryMapper;
+
+	@Resource
+	private ISonyChannelCategoryService sonyChannelCategoryService;
 	
 	/**
 	 * 查询渠道信息
@@ -100,8 +103,10 @@ public class SonyChannelServiceImpl implements ISonyChannelService {
 	 */
 	@Override
 	public int updateSonyChannel(SonyChannel sonyChannel) {
+		String primaryChannel = sonyChannel.getPrimaryChannel();
+		ExceptionAssert.throwException(primaryChannel == null, "一级渠道不能为空");
 		// 渠道名存在校验
-		checkChannelName(sonyChannel);
+		sonyChannelCategoryService.checkChannelName(sonyChannel);
 		
 		sonyChannel.setUpdateTime(DateUtils.getNowDate());
 		sonyChannel.setUpdatedBy(SecurityUtils.getUsername());
@@ -148,7 +153,7 @@ public class SonyChannelServiceImpl implements ISonyChannelService {
 	@Override
 	public void addChannel(SonyChannel sonyChannel) {
 		// 渠道存在校验
-		checkChannelName(sonyChannel);
+		sonyChannelCategoryService.checkChannelName(sonyChannel);
 		
 		// 生成channelCode
 		String channelCode = stringUtils.getChannelCode();
@@ -165,19 +170,6 @@ public class SonyChannelServiceImpl implements ISonyChannelService {
 		// 更新该渠道qrCodeUrl
 		sonyChannelService.updateSonyChannel(sonyChannel);
 		logger.info("添加渠道 {} 成功. 渠道信息: {}", sonyChannel.getPrimaryChannel(), sonyChannel);
-	}
-	
-	private void checkChannelName(SonyChannel sonyChannel) {
-		String primaryChannel = sonyChannel.getPrimaryChannel();
-		ExceptionAssert.throwException(primaryChannel == null, "一级渠道不能为空");
-		// 渠道存在校验
-		SonyChannelCategory primaryChannelCategory = sonyChannelCategoryMapper.selectSonyChannelCategoryByChannelName(sonyChannel.getPrimaryChannel());
-		ExceptionAssert.throwException(primaryChannelCategory == null, "一级渠道不存在");
-		String secondaryChannel = sonyChannel.getSecondaryChannel();
-		if (secondaryChannel != null) {
-			SonyChannelCategory secondaryChannelCategory = sonyChannelCategoryMapper.selectSonyChannelCategoryByChannelName(secondaryChannel);
-			ExceptionAssert.throwException(secondaryChannelCategory == null, "二级渠道不存在");
-		}
 	}
 	
 	private String generateQrCodeUrlAndSave(long id, String channelCode) {

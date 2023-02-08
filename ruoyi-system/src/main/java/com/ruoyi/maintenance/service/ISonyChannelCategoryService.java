@@ -1,7 +1,9 @@
 package com.ruoyi.maintenance.service;
 
+import com.ruoyi.maintenance.domain.SonyChannel;
 import com.ruoyi.maintenance.domain.SonyChannelCategory;
 import com.ruoyi.maintenance.domain.dto.SonyChannelCategoryDTO;
+import com.ruoyi.maintenance.domain.excel.SonyChannelCategoryExportVO;
 import com.ruoyi.maintenance.domain.vo.SonyChannelCategoryIndexVO;
 import com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO;
 
@@ -53,7 +55,7 @@ public interface ISonyChannelCategoryService
      * @param ids 需要删除的渠道关系主键集合
      * @return 结果
      */
-    public int deleteSonyChannelCategoryByIds(Long[] ids);
+    public int deleteSonyChannelCategoryByIds(List<Integer> ids);
 
     /**
      * 删除渠道关系信息
@@ -61,7 +63,7 @@ public interface ISonyChannelCategoryService
      * @param id 渠道关系主键
      * @return 结果
      */
-    public int deleteSonyChannelCategoryById(Long id);
+    public int deleteSonyChannelCategoryById(Integer id);
 
     List<SonyChannelCategoryVO> selectChannelList(SonyChannelCategory sonyChannelCategory);
 
@@ -72,4 +74,8 @@ public interface ISonyChannelCategoryService
     List<SonyChannelCategoryVO> selectChannelListByChannelName(String channelName);
     
     List<SonyChannelCategoryIndexVO> selectChannelCategoryListByChannelCategoryDTO(SonyChannelCategoryDTO dto);
+
+    void checkChannelName(SonyChannel sonyChannel);
+
+    List<SonyChannelCategoryExportVO> selectSonyChannelCategoryIndexVOByIds(List<Integer> ids);
 }
