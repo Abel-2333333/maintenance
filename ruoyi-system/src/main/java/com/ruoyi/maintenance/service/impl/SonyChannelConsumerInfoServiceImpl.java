@@ -1,12 +1,16 @@
 package com.ruoyi.maintenance.service.impl;
 
-import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.maintenance.domain.SonyChannelConsumerInfo;
+import com.ruoyi.maintenance.domain.dto.SonyChannelConsumerInfoDTO;
+import com.ruoyi.maintenance.domain.excel.SonyChannelConsumerInfoExportVO;
+import com.ruoyi.maintenance.domain.vo.SonyChannelConsumerInfoVO;
+import com.ruoyi.maintenance.mapper.SonyChannelConsumerInfoMapper;
+import com.ruoyi.maintenance.service.ISonyChannelConsumerInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.maintenance.mapper.SonyChannelConsumerInfoMapper;
-import com.ruoyi.maintenance.domain.SonyChannelConsumerInfo;
-import com.ruoyi.maintenance.service.ISonyChannelConsumerInfoService;
+
+import java.util.List;
 
 /**
  * 客户渠道信息Service业务层处理
@@ -92,4 +96,14 @@ public class SonyChannelConsumerInfoServiceImpl implements ISonyChannelConsumerI
     {
         return sonyChannelConsumerInfoMapper.deleteSonyChannelConsumerInfoById(id);
     }
+	
+	@Override
+	public List<SonyChannelConsumerInfoVO> selectSonyChannelConsumerInfoListByDTO(SonyChannelConsumerInfoDTO dto) {
+        return  sonyChannelConsumerInfoMapper.selectSonyChannelConsumerInfoListByDTO(dto);
+	}
+	
+	@Override
+	public List<SonyChannelConsumerInfoExportVO> selectSonyChannelConsumerInfoListByIds(List<Integer> ids) {
+        return sonyChannelConsumerInfoMapper.selectSonyChannelConsumerInfoListByIds(ids);
+	}
 }

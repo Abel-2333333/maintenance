@@ -1,25 +1,24 @@
 package com.ruoyi.web.controller.maintenance;
 
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.maintenance.domain.SonyChannelConsumerInfo;
-import com.ruoyi.maintenance.service.ISonyChannelConsumerInfoService;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.wechat.util.FileUtils;
+import com.ruoyi.maintenance.domain.SonyChannelConsumerInfo;
+import com.ruoyi.maintenance.domain.dto.SonyChannelConsumerInfoDTO;
+import com.ruoyi.maintenance.domain.excel.SonyChannelConsumerInfoExportVO;
+import com.ruoyi.maintenance.domain.vo.SonyChannelConsumerInfoVO;
+import com.ruoyi.maintenance.service.ISonyChannelConsumerInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 客户渠道信息Controller
@@ -39,10 +38,10 @@ public class SonyChannelConsumerInfoController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('maintenance:channelConsumerInfo:list')")
     @GetMapping("/list")
-    public TableDataInfo list(SonyChannelConsumerInfo sonyChannelConsumerInfo)
+    public TableDataInfo list(SonyChannelConsumerInfoDTO dto)
     {
         startPage();
-        List<SonyChannelConsumerInfo> list = sonyChannelConsumerInfoService.selectSonyChannelConsumerInfoList(sonyChannelConsumerInfo);
+        List<SonyChannelConsumerInfoVO> list = sonyChannelConsumerInfoService.selectSonyChannelConsumerInfoListByDTO(dto);
         return getDataTable(list);
     }
 
@@ -52,11 +51,15 @@ public class SonyChannelConsumerInfoController extends BaseController
     @PreAuthorize("@ss.hasPermi('maintenance:channelConsumerInfo:export')")
     @Log(title = "客户渠道信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, SonyChannelConsumerInfo sonyChannelConsumerInfo)
+    public void export(HttpServletResponse response, @RequestBody(required = false) List<Integer> ids)
     {
-        List<SonyChannelConsumerInfo> list = sonyChannelConsumerInfoService.selectSonyChannelConsumerInfoList(sonyChannelConsumerInfo);
-        ExcelUtil<SonyChannelConsumerInfo> util = new ExcelUtil<SonyChannelConsumerInfo>(SonyChannelConsumerInfo.class);
-        util.exportExcel(response, list, "客户渠道信息数据");
+        List<SonyChannelConsumerInfoExportVO> list = sonyChannelConsumerInfoService.selectSonyChannelConsumerInfoListByIds(ids);
+        try {
+            FileUtils.export(response, "客户渠道信息", list);
+        } catch (Exception e) {
+            logger.error("导出客户渠道信息表时出错", e);
+            throw new ServiceException("导出客户渠道信息出错", HttpStatus.ERROR);
+        }
     }
 
     /**

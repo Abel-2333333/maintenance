@@ -71,17 +71,18 @@ public class SonyChannelCategoryController extends BaseController {
 	 * 查询所有二级渠道
 	 */
 	@GetMapping("/secondary/all")
-	public TableDataInfo getAllSecondaryChannel() {
+	public AjaxResult getAllSecondaryChannel(@RequestParam(required = false) Integer id) {
 		SonyChannelCategory sonyChannelCategory = new SonyChannelCategory();
+		sonyChannelCategory.setParentId(id);
 		List<SonyChannelCategoryVO> list = sonyChannelCategoryService.selectSecondaryChannelList(sonyChannelCategory);
-		return getDataTable(list);
+		return success(list);
 	}
 	
 	/**
 	 * 分页查询二级渠道
 	 */
 	@GetMapping("/secondary/list")
-	public TableDataInfo getSecondaryChannel(@RequestBody(required = false) SonyChannelCategoryDTO dto) {
+	public TableDataInfo getSecondaryChannel( SonyChannelCategoryDTO dto) {
 		startPage();
 		List<SonyChannelCategoryIndexVO> list = sonyChannelCategoryService.selectChannelCategoryListByChannelCategoryDTO(dto);
 		return getDataTable(list);
@@ -132,7 +133,7 @@ public class SonyChannelCategoryController extends BaseController {
 	@PreAuthorize("@ss.hasPermi('maintenance:channelCategory:export')")
 	@Log(title = "渠道关系", businessType = BusinessType.EXPORT)
 	@PostMapping("/export")
-	public void export(HttpServletResponse response, /*@RequestBody(required = false)*/ @RequestParam(required = false) List<Integer> ids)  {
+	public void export(HttpServletResponse response, @RequestBody(required = false) List<Integer> ids)  {
 		List<SonyChannelCategoryExportVO> list = sonyChannelCategoryService.selectSonyChannelCategoryIndexVOByIds(ids);
 		try {
 			FileUtils.export(response, "渠道维护", list);

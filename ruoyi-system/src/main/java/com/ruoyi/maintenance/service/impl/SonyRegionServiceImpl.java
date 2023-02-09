@@ -1,12 +1,18 @@
 package com.ruoyi.maintenance.service.impl;
 
+import com.ruoyi.common.constant.CacheConstants;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.maintenance.domain.SonyRegion;
 import com.ruoyi.maintenance.mapper.SonyRegionMapper;
 import com.ruoyi.maintenance.service.ISonyRegionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 省市关系Service业务层处理
@@ -19,7 +25,32 @@ public class SonyRegionServiceImpl implements ISonyRegionService
 {
     @Autowired
     private SonyRegionMapper sonyRegionMapper;
-
+    
+    @Resource
+    private RedisCache redisCache;
+    
+    /**
+     * 项目启动时，初始化参数到缓存
+     */
+    @PostConstruct
+    public void init()
+    {
+        loadingRegionCache();
+    }
+    
+    /**
+     * 加载省市到缓存
+     */
+    @Override
+    public void loadingRegionCache() {
+        List<SonyRegion> sonyRegions = sonyRegionMapper.selectSonyRegionList(new SonyRegion());
+        // 将省市关系转换成id:regionName的map
+        Map<String, String> idToRegionMap = sonyRegions.stream().
+                collect(Collectors.toMap(e->e.getId().toString(), SonyRegion::getRegionName));
+        
+        redisCache.setCacheMap(CacheConstants.SONY_REGION_KEY, idToRegionMap);
+    }
+    
     /**
      * 查询省市关系
      * 

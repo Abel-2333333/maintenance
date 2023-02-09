@@ -1,6 +1,7 @@
 package com.ruoyi.maintenance.service;
 
 import com.google.zxing.WriterException;
+import com.ruoyi.common.wechat.entity.QrCodeResponseBody;
 import me.chanjar.weixin.common.error.WxErrorException;
 
 import java.io.IOException;
@@ -12,11 +13,11 @@ import java.io.IOException;
 public interface IQrCodeService {
 
     /**
-     * 调用微信接口获取二维码跳转url
+     * 调用微信接口获取二维码返回的响应体
      * @param id 渠道id. 也是场景值.
      * @return url
      */
-    String getQrCodeUrl(Integer id) throws WxErrorException;
+    QrCodeResponseBody getQrCodeResponseBody(Integer id) throws WxErrorException;
 
     /**
      * 生成并保存渠道码

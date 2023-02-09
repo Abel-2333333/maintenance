@@ -8,6 +8,8 @@ import lombok.Data;
  */
 @Data
 public class SonyChannelCategoryDTO {
+	
+	private Integer id;
 	private String primaryChannel;
 	
 	private String secondaryChannel;

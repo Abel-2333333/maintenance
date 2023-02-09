@@ -108,6 +108,8 @@ public class SonyChannelVO {
      * 微信生成的二维码跳转的url
      */
     private String qrcodeUrl;
+    
+    private String ticket;
 
 
     /**

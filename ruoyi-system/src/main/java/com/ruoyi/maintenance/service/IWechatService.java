@@ -1,5 +1,6 @@
 package com.ruoyi.maintenance.service;
 
+import com.ruoyi.common.wechat.entity.QrCodeResponseBody;
 import com.ruoyi.common.wechat.util.WechatUtil;
 import com.ruoyi.maintenance.domain.EphemeralSceneBody;
 import com.ruoyi.maintenance.domain.SceneBody;
@@ -54,6 +55,6 @@ public  interface IWechatService {
 			return sceneBody;
 		}
 	}
-
-	String getQrCodeUrl(Integer id) throws WxErrorException;
+	
+	QrCodeResponseBody getQrCodeResponseBody(Integer id) throws WxErrorException;
 }

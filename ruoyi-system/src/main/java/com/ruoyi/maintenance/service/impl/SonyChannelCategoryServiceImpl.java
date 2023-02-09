@@ -4,7 +4,6 @@ import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.wechat.exception.ExceptionAssert;
-import com.ruoyi.maintenance.domain.SonyChannel;
 import com.ruoyi.maintenance.domain.SonyChannelCategory;
 import com.ruoyi.maintenance.domain.dto.SonyChannelCategoryDTO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelCategoryExportVO;
@@ -150,21 +149,33 @@ public class SonyChannelCategoryServiceImpl implements ISonyChannelCategoryServi
 	public List<SonyChannelCategoryIndexVO> selectChannelCategoryListByChannelCategoryDTO(SonyChannelCategoryDTO dto) {
 		return  sonyChannelCategoryMapper.selectChannelCategoryListByChannelCategoryDTO(dto);
 	}
-
+	
 	@Override
-	public void checkChannelName(SonyChannel sonyChannel) {
+	public void checkChannelName(SonyChannelCategoryDTO sonyChannelCategoryDTO) {
 		// 渠道存在校验
-		SonyChannelCategory primaryChannelCategory = sonyChannelCategoryMapper.selectSonyChannelCategoryByChannelName(sonyChannel.getPrimaryChannel());
+		SonyChannelCategory primaryChannelCategory = sonyChannelCategoryMapper.selectSonyChannelCategoryById(Integer.valueOf(sonyChannelCategoryDTO.getPrimaryChannel()));
 		ExceptionAssert.throwException(primaryChannelCategory == null, "一级渠道不存在");
-		String secondaryChannel = sonyChannel.getSecondaryChannel();
+		String secondaryChannel = sonyChannelCategoryDTO.getSecondaryChannel();
 		if (secondaryChannel != null) {
-			SonyChannelCategory secondaryChannelCategory = sonyChannelCategoryMapper.selectSonyChannelCategoryByChannelName(secondaryChannel);
+			SonyChannelCategory secondaryChannelCategory = sonyChannelCategoryMapper.selectSonyChannelCategoryById(Integer.valueOf(secondaryChannel));
 			ExceptionAssert.throwException(secondaryChannelCategory == null, "二级渠道不存在");
 		}
 	}
-
-    @Override
+	
+	@Override
     public List<SonyChannelCategoryExportVO> selectSonyChannelCategoryIndexVOByIds(List<Integer> ids) {
 		return sonyChannelCategoryMapper.selectSonyChannelCategoryIndexVOByIds(ids);
-    }
+	}
+	
+	@Override
+	public List<SonyChannelCategory> selectSonyChannelCategoryByIds(List<Integer> idList) {
+		return sonyChannelCategoryMapper.selectChannelListByIds(idList);
+	}
+	
+	public SonyChannelCategoryDTO getSonyChannelCategoryDTO(String primaryChannel, String secondaryChannel) {
+		SonyChannelCategoryDTO sonyChannelCategoryDTO = new SonyChannelCategoryDTO();
+		sonyChannelCategoryDTO.setPrimaryChannel(primaryChannel);
+		sonyChannelCategoryDTO.setSecondaryChannel(secondaryChannel);
+		return sonyChannelCategoryDTO;
+	}
 }

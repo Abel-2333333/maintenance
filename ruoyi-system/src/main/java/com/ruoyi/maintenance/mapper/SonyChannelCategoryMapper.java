@@ -73,7 +73,7 @@ public interface SonyChannelCategoryMapper
     
     SonyChannelCategoryIndexVO selectSonyChannelCategoryIndexVOByChannelName(String channelName);
     
-    List<SonyChannelCategory> selectChannelListByIds(Integer[] ids);
+    List<SonyChannelCategory> selectChannelListByIds(List<Integer> ids);
     
     SonyChannelCategory selectSonyChannelCategoryByChannelName(@Param("channelName") String channelName);
     
@@ -84,4 +84,5 @@ public interface SonyChannelCategoryMapper
     List<Integer> selectChannelListByParentId(List<Integer> ids);
 
     List<SonyChannelCategoryExportVO> selectSonyChannelCategoryIndexVOByIds(List<Integer> ids);
+    
 }

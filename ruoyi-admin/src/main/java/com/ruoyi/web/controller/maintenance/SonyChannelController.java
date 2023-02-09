@@ -11,11 +11,13 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.wechat.util.FileUtils;
 import com.ruoyi.maintenance.domain.SonyChannel;
+import com.ruoyi.maintenance.domain.SonyChannelCategory;
 import com.ruoyi.maintenance.domain.dto.SonyChannelDTO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelExcelVO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelImportVO;
 import com.ruoyi.maintenance.domain.listener.SonyChannelListener;
 import com.ruoyi.maintenance.domain.vo.SonyChannelVO;
+import com.ruoyi.maintenance.mapper.SonyChannelCategoryMapper;
 import com.ruoyi.maintenance.mapper.SonyChannelMapper;
 import com.ruoyi.maintenance.service.ISonyChannelService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ import javax.validation.Valid;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -49,6 +52,8 @@ public class SonyChannelController extends BaseController {
     private final ISonyChannelService sonyChannelService;
 
     private final SonyChannelMapper sonyChannelMapper;
+    
+    private final SonyChannelCategoryMapper sonyChannelCategoryMapper;
 
     private final ThreadPoolTaskExecutor executor;
 
@@ -60,12 +65,23 @@ public class SonyChannelController extends BaseController {
     public TableDataInfo list(SonyChannelDTO sonyChannel) {
         startPage();
         List<SonyChannelVO> list = sonyChannelService.selectSonyChannelListByDTO(sonyChannel);
-        list.stream().filter(e -> e.getDelFlag() == 0).forEach(e -> {
+        // 获取当前分页数据的渠道id查询渠道分类信息
+        List<Integer> channelIds = list.stream().map(e -> Integer.valueOf(e.getPrimaryChannel())).distinct().collect(Collectors.toList());
+        channelIds.addAll(list.stream().map(e -> Integer.valueOf(e.getSecondaryChannel())).distinct().collect(Collectors.toList()));
+        List<SonyChannelCategory> sonyChannelCategoryList = sonyChannelCategoryMapper.selectChannelListByIds(channelIds);
+        Map<Integer, String> idToChannelNameMap = sonyChannelCategoryList.stream()
+                .collect(Collectors.toMap(SonyChannelCategory::getId, SonyChannelCategory::getChannelName));
+    
+        list.forEach(e -> {
             String channelCode = e.getChannelCode();
             String qrCodePath = FileUtils.getQrCodeUrl(channelCode);
             String qrCodeWithLogoPath = FileUtils.getQrCodeWithLogoUrl(channelCode);
             e.setQrCode(qrCodePath);
             e.setQrCodeWithLogo(qrCodeWithLogoPath);
+            
+            // 从map中获取渠道名赋值给vo
+            e.setPrimaryChannel(idToChannelNameMap.get(Integer.valueOf(e.getPrimaryChannel())));
+            e.setSecondaryChannel(idToChannelNameMap.get(Integer.valueOf(e.getSecondaryChannel())));
         });
         return getDataTable(list);
     }
@@ -117,7 +133,7 @@ public class SonyChannelController extends BaseController {
     /**
      * 获取一级渠道
      */
-    @GetMapping("/primary")
+//    @GetMapping("/primary")
     public AjaxResult getPrimaryChannel() {
         List<SonyChannel> list = sonyChannelService.selectSonyChannelList(new SonyChannel());
         if (list.isEmpty()) {
@@ -133,7 +149,7 @@ public class SonyChannelController extends BaseController {
     /**
      * 获取二级渠道
      */
-    @GetMapping("/secondary")
+//    @GetMapping("/secondary")
     public AjaxResult getSecondaryChannel() {
         List<SonyChannel> list = sonyChannelService.selectSonyChannelList(new SonyChannel());
         if (list.isEmpty()) {

@@ -1,7 +1,11 @@
 package com.ruoyi.maintenance.mapper;
 
-import java.util.List;
 import com.ruoyi.maintenance.domain.SonyChannelConsumerInfo;
+import com.ruoyi.maintenance.domain.dto.SonyChannelConsumerInfoDTO;
+import com.ruoyi.maintenance.domain.excel.SonyChannelConsumerInfoExportVO;
+import com.ruoyi.maintenance.domain.vo.SonyChannelConsumerInfoVO;
+
+import java.util.List;
 
 /**
  * 客户渠道信息Mapper接口
@@ -58,4 +62,8 @@ public interface SonyChannelConsumerInfoMapper
      * @return 结果
      */
     public int deleteSonyChannelConsumerInfoByIds(Long[] ids);
+	
+	List<SonyChannelConsumerInfoVO> selectSonyChannelConsumerInfoListByDTO(SonyChannelConsumerInfoDTO dto);
+    
+    List<SonyChannelConsumerInfoExportVO> selectSonyChannelConsumerInfoListByIds(List<Integer> ids);
 }

@@ -85,6 +85,10 @@ public class SonyChannelImportVO {
     @Excel(name = "微信生成的二维码跳转的url")
     @ExcelProperty(value = "微信生成的二维码跳转的url")
     private String qrcodeUrl;
+    
+    @Excel(name = "微信生成的二维码跳转的ticket")
+    @ExcelProperty(value = "微信生成的二维码跳转的ticket")
+    private String ticket;
 
     @Excel(name = "备注")
     @ExcelProperty(value = "备注")

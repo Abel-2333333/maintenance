@@ -12,6 +12,7 @@ import java.util.List;
  */
 public interface ISonyRegionService 
 {
+    void loadingRegionCache();
     /**
      * 查询省市关系
      * 

@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.maintenance.mapper.SonyChannelMapper">
-    <resultMap type="SonyChannel" id="SonyChannelResult">
+    <resultMap type="com.ruoyi.maintenance.domain.SonyChannel" id="SonyChannelResult">
         <result property="id" column="id"/>
         <result property="primaryChannel" column="primary_channel"/>
         <result property="secondaryChannel" column="secondary_channel"/>
@@ -16,6 +16,7 @@
         <result property="storeCode" column="store_code"/>
         <result property="remark" column="remark"/>
         <result property="qrcodeUrl" column="qrcode_url"/>
+        <result property="ticket" column="ticket"/>
         <result property="delFlag" column="del_flag"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
@@ -23,7 +24,7 @@
         <result property="updatedBy" column="updated_by"/>
     </resultMap>
 
-    <resultMap type="SonyChannelVO" id="SonyChannelResult2">
+    <resultMap type="com.ruoyi.maintenance.domain.vo.SonyChannelVO" id="SonyChannelResult2">
         <result property="id" column="id"/>
         <result property="primaryChannel" column="primary_channel"/>
         <result property="secondaryChannel" column="secondary_channel"/>
@@ -36,6 +37,7 @@
         <result property="storeCode" column="store_code"/>
         <result property="remark" column="remark"/>
         <result property="qrcodeUrl" column="qrcode_url"/>
+        <result property="ticket" column="ticket"/>
         <result property="delFlag" column="del_flag"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
@@ -56,6 +58,7 @@
                store_code,
                remark,
                qrcode_url,
+               ticket,
                del_flag,
                create_time,
                update_time,
@@ -68,6 +71,7 @@
             resultMap="SonyChannelResult">
         <include refid="selectSonyChannelVo"/>
         <where>
+            del_flag = 0
             <if test="primaryChannel != null  and primaryChannel != ''">
                 and primary_channel like concat('%', #{primaryChannel}, '%')
             </if>
@@ -107,9 +111,10 @@
         </where>
     </select>
 
-    <select id="selectSonyChannelListByDTO" parameterType="SonyChannelDTO" resultMap="SonyChannelResult2">
+    <select id="selectSonyChannelListByDTO" parameterType="com.ruoyi.maintenance.domain.dto.SonyChannelDTO" resultMap="SonyChannelResult2">
         <include refid="selectSonyChannelVo"/>
         <where>
+            del_flag = 0
             <if test="primaryChannel != null  and primaryChannel != ''">
                 and primary_channel like concat('%', #{primaryChannel}, '%')
             </if>
@@ -130,10 +135,10 @@
 
     <select id="selectSonyChannelById" parameterType="Long" resultMap="SonyChannelResult">
         <include refid="selectSonyChannelVo"/>
-        where id = #{id}
+        where id = #{id} and del_flag = 0
     </select>
 
-    <insert id="insertSonyChannel" useGeneratedKeys="true" keyProperty="id" parameterType="SonyChannel">
+    <insert id="insertSonyChannel" useGeneratedKeys="true" keyProperty="id" parameterType="com.ruoyi.maintenance.domain.SonyChannel">
         insert into sony_channel
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -171,6 +176,9 @@
             </if>
             <if test="qrcodeUrl != null">
                 qrcode_url,
+            </if>
+            <if test="ticket != null and ticket != ''">
+                ticket,
             </if>
             <if test="delFlag != null">
                 del_flag,
@@ -225,6 +233,9 @@
             <if test="qrcodeUrl != null">
                 #{qrcodeUrl},
             </if>
+            <if test="ticket != null">
+                #{ticket},
+            </if>
             <if test="delFlag != null">
                 #{delFlag},
             </if>
@@ -246,19 +257,19 @@
         insert into sony_channel
         <trim prefix="(" suffix=")" suffixOverrides=",">
             id, primary_channel, secondary_channel, channel_code, province, city, maintenance_station_name,
-            maintenance_station_code, store_name, store_code, remark, qrcode_url, del_flag, create_time, update_time,
+            maintenance_station_code, store_name, store_code, remark, qrcode_url, ticket, del_flag, create_time, update_time,
             created_by, updated_by,
         </trim>
         values
         <foreach collection="list" item="item" separator=",">
             (null, #{item.primaryChannel}, #{item.secondaryChannel}, #{item.channelCode}, #{item.province}, #{item.city},
             #{item.maintenanceStationName}, #{item.maintenanceStationCode}, #{item.storeName}, #{item.storeCode},
-            #{item.remark}, null, 0, #{item.createTime}, #{item.updateTime}, #{item.createdBy},
+            #{item.remark}, null, null, 0, #{item.createTime}, #{item.updateTime}, #{item.createdBy},
             #{item.updatedBy})
         </foreach>
     </insert>
 
-    <update id="updateSonyChannel" parameterType="SonyChannel">
+    <update id="updateSonyChannel" parameterType="com.ruoyi.maintenance.domain.SonyChannel">
         update sony_channel
         <trim prefix="SET" suffixOverrides=",">
             <if test="primaryChannel != null and primaryChannel != ''">
@@ -294,6 +305,9 @@
             <if test="qrcodeUrl != null">
                 qrcode_url = #{qrcodeUrl},
             </if>
+            <if test="ticket != null">
+                ticket = #{ticket},
+            </if>
             <if test="delFlag != null">
                 del_flag = #{delFlag},
             </if>
@@ -314,14 +328,15 @@
     </update>
 
     <delete id="deleteSonyChannelById" parameterType="Long">
-        delete
-        from sony_channel
+        update  sony_channel set del_flag = 1
         where id = #{id}
     </delete>
 
     <delete id="deleteSonyChannelByIds" parameterType="Long">
-        delete
-        from sony_channel where id in
+        update sony_channel
+        set
+        del_flag = 1
+        where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -329,8 +344,9 @@
 
     <select id="selectSonyChannelListByIds" resultType="com.ruoyi.maintenance.domain.excel.SonyChannelExcelVO">
         <include refid="selectSonyChannelVo"/>
+        where del_flag = 0
         <if test="list != null and list.size() != 0">
-            where id in
+            and id in
             <foreach item="id" collection="list" open="(" separator="," close=")">
                 #{id}
             </foreach>
@@ -339,8 +355,9 @@
 
     <select id="selectSonyChannelByIds" resultType="com.ruoyi.maintenance.domain.SonyChannel">
         <include refid="selectSonyChannelVo"/>
+        where del_flag = 0
         <if test="array != null and array.length() != 0">
-            where id in
+            and id in
             <foreach item="id" collection="array" open="(" separator="," close=")">
                 #{id}
             </foreach>
@@ -360,7 +377,7 @@
         </foreach>
     </update>
 
-    <update id="batchUpdateSonyChannel" parameterType="SonyChannelImportVO">
+    <update id="batchUpdateSonyChannel" parameterType="com.ruoyi.maintenance.domain.excel.SonyChannelImportVO">
         update sony_channel
         <trim prefix="set" suffixOverrides=",">
             <trim prefix="primary_channel=case" suffix="end,">
@@ -430,6 +447,13 @@
                 <foreach collection="list" item="item" index="index">
                     <if test="item.qrcodeUrl != null and item.qrcodeUrl != ''">
                         when id = #{item.id} then #{item.qrcodeUrl}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="ticket=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.ticket != null and item.ticket != ''">
+                        when id = #{item.id} then #{item.ticket}
                     </if>
                 </foreach>
             </trim>

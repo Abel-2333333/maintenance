@@ -4,6 +4,7 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.wechat.entity.QrCodeResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +25,17 @@ public class WechatUtil {
     public static final String ACTION_INFO_SCENE = "scene";
     public static final String ACTION_INFO_SCENE_STR = "scene_str";
     
+    public static QrCodeResponseBody getQrCodeResponseBody(String accessToken, String body) {
+        String concatUrl = CREATE_TICKET_URL + accessToken;
+        String response = HttpUtil.post(concatUrl, body);
+        logger.info("获取ticket和url响应体: {}", response);
+        JSONObject jsonObject = new JSONObject(response);
+        if (jsonObject.containsKey("errcode")) {
+            throw new ServiceException("生成二维码出错", HttpStatus.ERROR);
+        }
+        return jsonObject.toBean(QrCodeResponseBody.class);
+    }
+    
     /**
      * 获取微信二维码的ticket和url
      * @param accessToken 微信access_token
@@ -31,14 +43,13 @@ public class WechatUtil {
      * @return url
      */
     public static String getQRCodeUrl(String accessToken, String body) {
-        String concatUrl = CREATE_TICKET_URL +accessToken;
-        String response = HttpUtil.post(concatUrl, body);
-        logger.info("获取ticket和url响应体: {}", response);
-        JSONObject jsonObject = new JSONObject(response);
-        if (jsonObject.containsKey("errcode")) {
-            throw new ServiceException("生成二维码出错", HttpStatus.ERROR);
-        }
-        return jsonObject.get("url", String.class);
+        QrCodeResponseBody qrCodeResponseBody = getQrCodeResponseBody(accessToken, body);
+        return qrCodeResponseBody.getUrl();
+    }
+    
+    public static String getTicket(String accessToken, String body) {
+        QrCodeResponseBody qrCodeResponseBody = getQrCodeResponseBody(accessToken, body);
+        return qrCodeResponseBody.getTicket();
     }
     
 }

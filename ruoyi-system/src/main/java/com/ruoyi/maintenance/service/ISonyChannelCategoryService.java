@@ -1,6 +1,5 @@
 package com.ruoyi.maintenance.service;
 
-import com.ruoyi.maintenance.domain.SonyChannel;
 import com.ruoyi.maintenance.domain.SonyChannelCategory;
 import com.ruoyi.maintenance.domain.dto.SonyChannelCategoryDTO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelCategoryExportVO;
@@ -75,7 +74,11 @@ public interface ISonyChannelCategoryService
     
     List<SonyChannelCategoryIndexVO> selectChannelCategoryListByChannelCategoryDTO(SonyChannelCategoryDTO dto);
 
-    void checkChannelName(SonyChannel sonyChannel);
+    void checkChannelName(SonyChannelCategoryDTO sonyChannelCategoryDTO);
+    
+    SonyChannelCategoryDTO getSonyChannelCategoryDTO(String primaryChannel, String secondaryChannel);
 
     List<SonyChannelCategoryExportVO> selectSonyChannelCategoryIndexVOByIds(List<Integer> ids);
+    
+    List<SonyChannelCategory> selectSonyChannelCategoryByIds(List<Integer> idList);
 }

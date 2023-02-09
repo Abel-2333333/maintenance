@@ -31,7 +31,7 @@
         </where>
     </select>
 
-    <select id="selectSonyChannelCategoryById" parameterType="Long" resultMap="SonyChannelCategoryResult">
+    <select id="selectSonyChannelCategoryById" parameterType="Integer" resultMap="SonyChannelCategoryResult">
         <include refid="selectSonyChannelCategoryVo"/>
         where id = #{id}
           and deleted_at is null
@@ -129,6 +129,9 @@
     <select id="selectSecondaryChannelList" resultType="com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO">
         <include refid="selectSonyChannelCategoryVo"/>
         where parent_id != -1
+        <if test="parentId !=null">
+            and parent_id = #{parentId}
+        </if>
           and deleted_at is null
     </select>
 
@@ -158,7 +161,7 @@
     <select id="selectChannelListByIds" resultType="com.ruoyi.maintenance.domain.SonyChannelCategory">
         <include refid="selectSonyChannelCategoryVo"/>
         where id in
-        <foreach item="id" collection="array" open="(" separator="," close=")">
+        <foreach item="id" collection="list" open="(" separator="," close=")">
             #{id}
         </foreach>
         and deleted_at is null
@@ -223,4 +226,5 @@
         and a.deleted_at is null
         and b.deleted_at is null
     </select>
+
 </mapper>

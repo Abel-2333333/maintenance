@@ -3,6 +3,7 @@ package com.ruoyi.maintenance.service.impl;
 import com.google.zxing.WriterException;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.utils.qrcode.QrCodeGenerator;
+import com.ruoyi.common.wechat.entity.QrCodeResponseBody;
 import com.ruoyi.common.wechat.util.FileUtils;
 import com.ruoyi.maintenance.service.IQrCodeService;
 import com.ruoyi.maintenance.service.IWechatService;
@@ -27,8 +28,8 @@ public class QrCodeServiceImpl implements IQrCodeService {
     private IWechatService wechatService;
 
     @Override
-    public String getQrCodeUrl(Integer id) throws WxErrorException {
-        return wechatService.getQrCodeUrl(id);
+    public QrCodeResponseBody getQrCodeResponseBody(Integer id) throws WxErrorException {
+        return wechatService.getQrCodeResponseBody(id);
     }
 
     @Override
