@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.exception.ServiceException;
-import com.ruoyi.common.wechat.util.FileUtils;
+import com.ruoyi.maintenance.wechat.util.FileUtils;
 import com.ruoyi.maintenance.domain.SonyChannelConsumerInfo;
 import com.ruoyi.maintenance.domain.dto.SonyChannelConsumerInfoDTO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelConsumerInfoExportVO;
@@ -37,8 +37,8 @@ public class SonyChannelConsumerInfoController extends BaseController
      * 查询客户渠道信息列表
      */
     @PreAuthorize("@ss.hasPermi('maintenance:channelConsumerInfo:list')")
-    @GetMapping("/list")
-    public TableDataInfo list(SonyChannelConsumerInfoDTO dto)
+    @PostMapping("/list")
+    public TableDataInfo list(@RequestBody SonyChannelConsumerInfoDTO dto)
     {
         startPage();
         List<SonyChannelConsumerInfoVO> list = sonyChannelConsumerInfoService.selectSonyChannelConsumerInfoListByDTO(dto);
@@ -55,7 +55,7 @@ public class SonyChannelConsumerInfoController extends BaseController
     {
         List<SonyChannelConsumerInfoExportVO> list = sonyChannelConsumerInfoService.selectSonyChannelConsumerInfoListByIds(ids);
         try {
-            FileUtils.export(response, "客户渠道信息", list);
+            FileUtils.export(response, "客户渠道信息", list, SonyChannelConsumerInfoExportVO.class);
         } catch (Exception e) {
             logger.error("导出客户渠道信息表时出错", e);
             throw new ServiceException("导出客户渠道信息出错", HttpStatus.ERROR);

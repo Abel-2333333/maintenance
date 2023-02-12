@@ -1,7 +1,7 @@
 package com.ruoyi.maintenance.service;
 
 import com.google.zxing.WriterException;
-import com.ruoyi.common.wechat.entity.QrCodeResponseBody;
+import com.ruoyi.maintenance.wechat.entity.QrCodeResponseBody;
 import me.chanjar.weixin.common.error.WxErrorException;
 
 import java.io.IOException;

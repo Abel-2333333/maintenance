@@ -1,7 +1,7 @@
 package com.ruoyi.maintenance.service;
 
-import com.ruoyi.common.wechat.entity.QrCodeResponseBody;
-import com.ruoyi.common.wechat.util.WechatUtil;
+import com.ruoyi.maintenance.wechat.entity.QrCodeResponseBody;
+import com.ruoyi.maintenance.wechat.util.WechatUtil;
 import com.ruoyi.maintenance.domain.EphemeralSceneBody;
 import com.ruoyi.maintenance.domain.SceneBody;
 import me.chanjar.weixin.common.error.WxErrorException;

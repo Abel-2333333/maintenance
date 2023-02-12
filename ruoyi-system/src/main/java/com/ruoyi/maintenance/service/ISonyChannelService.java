@@ -1,12 +1,18 @@
 package com.ruoyi.maintenance.service;
 
+import com.google.zxing.WriterException;
+import com.ruoyi.maintenance.wechat.entity.QrCodeResponseBody;
 import com.ruoyi.maintenance.domain.SonyChannel;
+import com.ruoyi.maintenance.domain.base.SonyChannelBaseEntity;
 import com.ruoyi.maintenance.domain.dto.SonyChannelDTO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelExcelVO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelImportVO;
 import com.ruoyi.maintenance.domain.vo.SonyChannelVO;
+import me.chanjar.weixin.common.error.WxErrorException;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 渠道信息Service接口
@@ -74,15 +80,21 @@ public interface ISonyChannelService
 
     List<SonyChannelExcelVO> selectSonyChannelListByIds(List<Integer> ids);
     
-    List<SonyChannel> selectSonyChannelByIds(Long[] ids);
+    List<SonyChannel> selectSonyChannelByIds(List<Long> ids);
     
-    int batchUpdateSonyChannel(Long[] ids);
+    void batchDelete(List<Long>  ids);
 
     void addChannel(SonyChannel sonyChannel);
+
+    QrCodeResponseBody generateQrCodeUrlAndSave(long id, String channelCode) throws WxErrorException, IOException, WriterException;
 
     void batchInsert(List<SonyChannelImportVO> list);
 
     void batchUpdateSonyChannel(List<SonyChannelImportVO> list);
 
     void batchAddChannel(List<SonyChannelImportVO> list);
+
+    void regenerateQrCode(List<Long> idToChannelCodeMap);
+
+    Map<String, String> getChannelIdToNameMap(List<? extends SonyChannelBaseEntity> list);
 }

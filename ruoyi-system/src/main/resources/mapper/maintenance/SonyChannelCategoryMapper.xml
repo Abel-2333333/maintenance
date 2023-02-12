@@ -21,13 +21,13 @@
             resultMap="SonyChannelCategoryResult">
         <include refid="selectSonyChannelCategoryVo"/>
         <where>
+            deleted_at IS NULL
             <if test="parentId != null">
                 and parent_id = #{parentId}
             </if>
             <if test="channelName != null  and channelName != ''">
                 and channel_name like concat('%', #{channelName}, '%')
             </if>
-            and deleted_at IS NULL
         </where>
     </select>
 
@@ -76,6 +76,37 @@
         </trim>
     </insert>
 
+    <insert id="batchInsertSonyChannelCategory">
+        insert into sony_channel_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            parent_id,
+            channel_name,
+            create_time,
+            created_by,
+            deleted_at,
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <foreach collection="list" item="item" separator=",">
+                #{item.id},
+                <if test="item.parentId != null">
+                    #{item.parentId},
+                </if>
+                <if test="item.channelName != null and item.channelName != ''">
+                    #{item.channelName},
+                </if>
+                <if test="item.createTime != null">
+                    #{item.createTime},
+                </if>
+                <if test="item.createdBy != null">
+                    #{item.createdBy},
+                </if>
+                #{item.deletedAt}
+            </foreach>
+        </trim>
+    </insert>
+
     <update id="updateSonyChannelCategory" parameterType="com.ruoyi.maintenance.domain.SonyChannelCategory">
         update sony_channel_category
         <trim prefix="SET" suffixOverrides=",">
@@ -99,6 +130,51 @@
           and deleted_at is null
     </update>
 
+    <update id="batchUpdateSonyChannelCategory">
+        update sony_channel_category
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="parent_id=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.parentId != null and item.parentId != ''">
+                        when id = #{item.id} then #{item.parentId}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="channel_name=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.channelName != null and item.channelName != ''">
+                        when id = #{item.id} then #{item.channelName}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="create_time=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.createTime != null">
+                        when id = #{item.id} then #{item.createTime}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="created_by=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.createdBy != null and item.createdBy != ''">
+                        when id = #{item.id} then #{item.createdBy}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="deleted_at=case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.deletedAt != null">
+                        when id = #{item.id} then #{item.deletedAt}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where
+        <foreach collection="list" separator="or" item="item" index="index">
+            id = #{item.id}
+        </foreach>
+    </update>
+
     <delete id="deleteSonyChannelCategoryById" parameterType="Integer">
         update sony_channel_category
         set deleted_at=now()
@@ -116,13 +192,16 @@
     <select id="selectChannelList" resultType="com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO">
         <include refid="selectSonyChannelCategoryVo"/>
         <where>
+            deleted_at is null
+            <if test="id != null">
+                and id = #{id}
+            </if>
             <if test="parentId != null">
                 and parent_id = #{parentId}
             </if>
             <if test="channelName != null  and channelName != ''">
                 and channel_name like concat('%', #{channelName}, '%')
             </if>
-            and deleted_at is null
         </where>
     </select>
 
@@ -160,31 +239,35 @@
 
     <select id="selectChannelListByIds" resultType="com.ruoyi.maintenance.domain.SonyChannelCategory">
         <include refid="selectSonyChannelCategoryVo"/>
-        where id in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-        and deleted_at is null
+        <where>
+            deleted_at is null
+            <if test="list != null and list.size() != 0">
+                and id in
+                <foreach item="id" collection="list" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
     </select>
 
     <select id="selectSonyChannelCategoryByChannelName" resultType="com.ruoyi.maintenance.domain.SonyChannelCategory">
         <include refid="selectSonyChannelCategoryVo"/>
         <where>
+            deleted_at is null
             <if test="channelName != null  and channelName != ''">
                 and channel_name = #{channelName}
             </if>
         </where>
-        and deleted_at is null
     </select>
 
     <select id="selectChannelCategoryByChannelName" resultType="com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO">
         <include refid="selectSonyChannelCategoryVo"/>
         <where>
+            deleted_at is null
             <if test="channelName != null  and channelName != ''">
                 and channel_name = #{channelName}
             </if>
         </where>
-        and deleted_at is null
     </select>
 
     <select id="selectChannelCategoryListByChannelCategoryDTO"
@@ -204,11 +287,17 @@
     </select>
 
     <select id="selectChannelListByParentId" resultType="java.lang.Integer">
-        select id from sony_channel_category where parent_id in
-        <foreach item="id" collection="list" open="(" separator="," close=")">
-            #{id}
-        </foreach>
-        and deleted_at is null
+        select id from sony_channel_category
+        <where>
+             deleted_at is null
+            <if test="list != null and list.size() != 0">
+                and parent_id in
+                <foreach item="id" collection="list" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+
     </select>
 
     <select id="selectSonyChannelCategoryIndexVOByIds"

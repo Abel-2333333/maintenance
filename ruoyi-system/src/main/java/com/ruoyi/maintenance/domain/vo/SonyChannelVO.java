@@ -5,6 +5,7 @@ import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.alibaba.excel.converters.string.StringImageConverter;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.maintenance.domain.base.SonyChannelBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -16,7 +17,7 @@ import java.util.Date;
  * @author Abel
  * @date 2023-02-01
  */
-public class SonyChannelVO {
+public class SonyChannelVO extends SonyChannelBaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**

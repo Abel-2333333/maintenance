@@ -70,15 +70,21 @@ public interface ISonyChannelCategoryService
 	
 	void deleteSonyChannelCategoryByChannelName(String channelName);
     
-    List<SonyChannelCategoryVO> selectChannelListByChannelName(String channelName);
+    List<SonyChannelCategoryVO> selectChannelListByChannelId ( Integer id);
     
     List<SonyChannelCategoryIndexVO> selectChannelCategoryListByChannelCategoryDTO(SonyChannelCategoryDTO dto);
 
     void checkChannelName(SonyChannelCategoryDTO sonyChannelCategoryDTO);
+
+    SonyChannelCategoryDTO checkChannelNameByName(SonyChannelCategoryDTO sonyChannelCategoryDTO);
     
     SonyChannelCategoryDTO getSonyChannelCategoryDTO(String primaryChannel, String secondaryChannel);
 
     List<SonyChannelCategoryExportVO> selectSonyChannelCategoryIndexVOByIds(List<Integer> ids);
     
     List<SonyChannelCategory> selectSonyChannelCategoryByIds(List<Integer> idList);
+
+    void batchInsert ( List <SonyChannelCategory> sonyChannelCategoryList );
+
+    void batchUpdate ( List <SonyChannelCategory> sonyChannelCategoryList );
 }

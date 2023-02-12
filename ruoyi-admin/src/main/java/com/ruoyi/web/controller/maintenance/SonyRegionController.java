@@ -9,9 +9,11 @@ import com.ruoyi.maintenance.domain.SonyRegion;
 import com.ruoyi.maintenance.service.ISonyRegionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,8 +35,8 @@ public class SonyRegionController extends BaseController
      * 查询省市关系列表
      */
     @PreAuthorize("@ss.hasPermi('maintenance:region:list')")
-    @GetMapping("/list")
-    public AjaxResult list(SonyRegion sonyRegion)
+    @PostMapping("/list")
+    public AjaxResult list(@RequestBody SonyRegion sonyRegion)
     {
         List<SonyRegion> list = sonyRegionService.selectSonyRegionList(sonyRegion);
         Map<String, List<SonyRegion>> parentIdToSonyRegionMap = list.stream().collect(Collectors.groupingBy(SonyRegion::getRegionParentId));
@@ -49,7 +51,7 @@ public class SonyRegionController extends BaseController
     /**
      * 查询所有省
      */
-    @GetMapping("/province")
+    @PostMapping("/province")
     public AjaxResult getProvinces() {
         SonyRegion sonyRegion = new SonyRegion();
         sonyRegion.setRegionParentId("-1");
@@ -60,8 +62,9 @@ public class SonyRegionController extends BaseController
     /**
      * 根据regionId查省下面的子级辖区
      */
-    @GetMapping("city")
-    public AjaxResult getCities(String regionId) {
+    @PostMapping("city")
+    @Validated
+    public AjaxResult getCities(@NotNull (message = "省名不能为空") @RequestBody String regionId) {
         return success(sonyRegionService.selectSonyRegionListByParentRegionId(regionId));
     }
 

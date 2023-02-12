@@ -3,7 +3,7 @@ package com.ruoyi.maintenance.domain.listener;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
-import com.ruoyi.common.wechat.util.JsonUtils;
+import com.ruoyi.maintenance.wechat.util.JsonUtils;
 import com.ruoyi.maintenance.domain.excel.SonyChannelImportVO;
 import com.ruoyi.maintenance.service.ISonyChannelService;
 import org.slf4j.Logger;

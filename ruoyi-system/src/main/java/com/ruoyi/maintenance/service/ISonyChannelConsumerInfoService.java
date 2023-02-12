@@ -4,6 +4,8 @@ import com.ruoyi.maintenance.domain.SonyChannelConsumerInfo;
 import com.ruoyi.maintenance.domain.dto.SonyChannelConsumerInfoDTO;
 import com.ruoyi.maintenance.domain.excel.SonyChannelConsumerInfoExportVO;
 import com.ruoyi.maintenance.domain.vo.SonyChannelConsumerInfoVO;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.result.WxMpUser;
 
 import java.util.List;
 
@@ -66,4 +68,6 @@ public interface ISonyChannelConsumerInfoService
     List<SonyChannelConsumerInfoVO> selectSonyChannelConsumerInfoListByDTO(SonyChannelConsumerInfoDTO dto);
     
     List<SonyChannelConsumerInfoExportVO> selectSonyChannelConsumerInfoListByIds(List<Integer> ids);
+
+    void saveSonyChannelConsumerInfo ( WxMpXmlMessage wxMessage, WxMpUser userWxInfo );
 }

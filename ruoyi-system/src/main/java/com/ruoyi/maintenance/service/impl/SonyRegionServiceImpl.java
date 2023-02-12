@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -44,11 +45,11 @@ public class SonyRegionServiceImpl implements ISonyRegionService
     @Override
     public void loadingRegionCache() {
         List<SonyRegion> sonyRegions = sonyRegionMapper.selectSonyRegionList(new SonyRegion());
-        // 将省市关系转换成id:regionName的map
-        Map<String, String> idToRegionMap = sonyRegions.stream().
-                collect(Collectors.toMap(e->e.getId().toString(), SonyRegion::getRegionName));
+        // 将省市关系转换成id:region的map
+        Map<String, SonyRegion> idToRegionMap = sonyRegions.stream().
+                collect(Collectors.toMap(e->e.getId().toString(), Function.identity ()));
         
-        redisCache.setCacheMap(CacheConstants.SONY_REGION_KEY, idToRegionMap);
+        redisCache.setCacheMap(CacheConstants.SONY_REGION_ID_NAME_MAP_KEY, idToRegionMap);
     }
     
     /**

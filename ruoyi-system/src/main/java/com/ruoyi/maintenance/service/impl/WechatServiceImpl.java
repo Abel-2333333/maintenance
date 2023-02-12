@@ -1,14 +1,15 @@
 package com.ruoyi.maintenance.service.impl;
 
 import com.alibaba.fastjson2.JSON;
-import com.ruoyi.common.wechat.config.WxMpProperties;
-import com.ruoyi.common.wechat.entity.QrCodeResponseBody;
-import com.ruoyi.common.wechat.util.WechatUtil;
+import com.ruoyi.maintenance.wechat.config.WxMpProperties;
+import com.ruoyi.maintenance.wechat.entity.QrCodeResponseBody;
+import com.ruoyi.maintenance.wechat.util.WechatUtil;
 import com.ruoyi.maintenance.domain.SceneBody;
 import com.ruoyi.maintenance.service.IWechatService;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.config.WxMpConfigStorage;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -39,7 +40,13 @@ public class WechatServiceImpl implements IWechatService {
 	public QrCodeResponseBody getQrCodeResponseBody(Integer id) throws WxErrorException {
 		boolean ephemeral = wxMpProperties.isEphemeral();
 		SceneBody<String> sceneBody = wechatService.getSceneBody(id, ephemeral);
-		String accessToken = wxMpService.getAccessToken();
+		WxMpConfigStorage wxMpConfigStorage = wxMpService.getWxMpConfigStorage();
+		String accessToken = null;
+		if (wxMpConfigStorage.isAccessTokenExpired()) {
+			accessToken = wxMpService.getAccessToken(Boolean.TRUE);
+		} else {
+			accessToken = wxMpConfigStorage.getAccessToken();
+		}
 		return WechatUtil.getQrCodeResponseBody(accessToken, JSON.toJSONString(sceneBody));
 	}
 

@@ -8,6 +8,7 @@ import com.alibaba.excel.annotation.write.style.ContentStyle;
 import com.alibaba.excel.converters.string.StringImageConverter;
 import com.alibaba.excel.enums.poi.HorizontalAlignmentEnum;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.maintenance.domain.base.SonyChannelBaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -17,7 +18,7 @@ import static com.alibaba.excel.enums.poi.VerticalAlignmentEnum.CENTER;
 
 @ContentRowHeight(100)
 @ContentStyle(horizontalAlignment = HorizontalAlignmentEnum.CENTER, verticalAlignment = CENTER)
-public class SonyChannelExcelVO {
+public class SonyChannelExcelVO extends SonyChannelBaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**

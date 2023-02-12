@@ -139,7 +139,7 @@ wx:
     redisConfig:
       host: 54.204.37.108
       port: 5556
-    ephemeral: false
+    ephemeral: true
     configs:
       - appId: wx02ff799649a9db7b # 第一个公众号的appid
         token: FhOz6rHQ8LkmLc7IY9Z # 接口配置里的Token值

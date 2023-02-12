@@ -45,5 +45,6 @@ public class CacheConstants
     /**
      * 省市map的 redis key
      */
-    public static final String SONY_REGION_KEY = "maintenance:sony_region";
+    public static final String SONY_REGION_ID_NAME_MAP_KEY = "maintenance:sony_region:id_name_map";
+    public static final String SONY_REGION_PARENT_ID_NAME_MAP_KEY = "maintenance:sony_region:parent_id_regions_map";
 }

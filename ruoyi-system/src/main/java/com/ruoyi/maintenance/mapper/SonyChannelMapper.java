@@ -72,9 +72,9 @@ public interface SonyChannelMapper
      */
     List<SonyChannelExcelVO> selectSonyChannelListByIds(List<Integer> ids);
 	
-	List<SonyChannel> selectSonyChannelByIds(Long[] ids);
+	List<SonyChannel> selectSonyChannelByIds(List<Long> ids);
     
-    int batchUpdate(Long[] ids);
+    int batchDelete(List<Long>  ids);
 
     void batchUpdateSonyChannel(List<SonyChannelImportVO> cachedDataList);
 

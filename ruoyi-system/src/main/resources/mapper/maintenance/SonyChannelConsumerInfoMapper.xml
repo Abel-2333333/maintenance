@@ -257,7 +257,8 @@
 
     <select id="selectSonyChannelConsumerInfoListByIds"
             resultType="com.ruoyi.maintenance.domain.excel.SonyChannelConsumerInfoExportVO">
-        select a.union_id,
+        select a.id,
+               a.union_id,
                a.nickname,
                a.real_name,
                a.gender,

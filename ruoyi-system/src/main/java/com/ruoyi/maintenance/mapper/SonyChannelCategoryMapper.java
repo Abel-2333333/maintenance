@@ -84,5 +84,8 @@ public interface SonyChannelCategoryMapper
     List<Integer> selectChannelListByParentId(List<Integer> ids);
 
     List<SonyChannelCategoryExportVO> selectSonyChannelCategoryIndexVOByIds(List<Integer> ids);
-    
+
+    void batchInsertSonyChannelCategory ( List<SonyChannelCategory> sonyChannelCategoryList );
+
+    void batchUpdateSonyChannelCategory ( List<SonyChannelCategory> sonyChannelCategoryList );
 }
