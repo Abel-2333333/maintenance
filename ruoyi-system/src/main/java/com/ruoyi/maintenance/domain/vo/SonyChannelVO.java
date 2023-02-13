@@ -26,6 +26,13 @@ public class SonyChannelVO extends SonyChannelBaseEntity {
     @Excel(name = "渠道编号", cellType = Excel.ColumnType.NUMERIC, prompt = "渠道编号")
     @ExcelProperty(value = "渠道编号")
     private Long id;
+    
+    /**
+     * 一级渠道id
+     */
+    @Excel(name = "一级渠道id")
+    @ExcelProperty(value = "一级渠道id")
+    private String primaryChannelId;
 
     /**
      * 一级渠道
@@ -34,6 +41,13 @@ public class SonyChannelVO extends SonyChannelBaseEntity {
 //    @NotNull(message = "一级渠道不能为空")
     @ExcelProperty(value = "一级渠道")
     private String primaryChannel;
+    
+    /**
+     * 二级渠道id
+     */
+    @Excel(name = "二级渠道id")
+    @ExcelProperty(value = "二级渠道id")
+    private String secondaryChannelId;
 
     /**
      * 二级渠道
@@ -144,7 +158,15 @@ public class SonyChannelVO extends SonyChannelBaseEntity {
     public Long getId() {
         return id;
     }
-
+    
+    public String getPrimaryChannelId() {
+        return primaryChannelId;
+    }
+    
+    public void setPrimaryChannelId(String primaryChannelId) {
+        this.primaryChannelId = primaryChannelId;
+    }
+    
     public void setPrimaryChannel(String primaryChannel) {
         this.primaryChannel = primaryChannel;
     }
@@ -152,7 +174,15 @@ public class SonyChannelVO extends SonyChannelBaseEntity {
     public String getPrimaryChannel() {
         return primaryChannel;
     }
-
+    
+    public String getSecondaryChannelId() {
+        return secondaryChannelId;
+    }
+    
+    public void setSecondaryChannelId(String secondaryChannelId) {
+        this.secondaryChannelId = secondaryChannelId;
+    }
+    
     public void setSecondaryChannel(String secondaryChannel) {
         this.secondaryChannel = secondaryChannel;
     }

@@ -253,6 +253,7 @@
                 and a.create_time &lt;= #{endTime,jdbcType=TIMESTAMP}
             </if>
         </where>
+        order by create_time desc, subscribe_time desc
     </select>
 
     <select id="selectSonyChannelConsumerInfoListByIds"
@@ -281,5 +282,6 @@
                 </foreach>
             </if>
         </where>
+        order by create_time desc, subscribe_time desc
     </select>
 </mapper>

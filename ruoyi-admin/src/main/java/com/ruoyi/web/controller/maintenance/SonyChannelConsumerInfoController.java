@@ -41,7 +41,8 @@ public class SonyChannelConsumerInfoController extends BaseController
     public TableDataInfo list(@RequestBody SonyChannelConsumerInfoDTO dto)
     {
         startPage();
-        List<SonyChannelConsumerInfoVO> list = sonyChannelConsumerInfoService.selectSonyChannelConsumerInfoListByDTO(dto);
+        List<SonyChannelConsumerInfoVO> list = sonyChannelConsumerInfoService
+                .selectSonyChannelConsumerInfoListByDTO(dto);
         return getDataTable(list);
     }
 

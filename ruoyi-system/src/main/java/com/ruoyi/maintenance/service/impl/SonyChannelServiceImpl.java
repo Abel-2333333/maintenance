@@ -105,9 +105,11 @@ public class SonyChannelServiceImpl implements ISonyChannelService {
             e.setQrCodeWithLogo ( qrCodeWithLogoPath );
 
             // 从map中获取渠道名赋值给vo
-            e.setPrimaryChannel ( channelIdToNameMap.get ( Integer.valueOf ( e.getPrimaryChannel () ) ) );
+            e.setPrimaryChannelId(e.getPrimaryChannel());
+            e.setSecondaryChannelId(e.getSecondaryChannel());
+            e.setPrimaryChannel ( channelIdToNameMap.get (  e.getPrimaryChannel () ) );
             if ( e.getSecondaryChannel () != null && !e.getSecondaryChannel ().equals ( "" ) ) {
-                e.setSecondaryChannel ( channelIdToNameMap.get ( Integer.valueOf ( e.getSecondaryChannel () ) ) );
+                e.setSecondaryChannel ( channelIdToNameMap.get ( e.getSecondaryChannel ()  ) );
             }
         } );
         return list;
@@ -186,7 +188,8 @@ public class SonyChannelServiceImpl implements ISonyChannelService {
 
     public Map <String, String> getChannelIdToNameMap ( List <? extends SonyChannelBaseEntity> list ) {
         // 获取list中所有的渠道id
-        List <Integer> channelIds = list.stream ().map ( e -> Integer.valueOf ( e.getPrimaryChannel () ) ).distinct ().collect ( Collectors.toList () );
+        List <Integer> channelIds = list.stream ()
+                .map ( e -> Integer.valueOf ( e.getPrimaryChannel () ) ).distinct ().collect ( Collectors.toList () );
         channelIds.addAll (
                 list.stream ()
                         .filter ( e -> e.getSecondaryChannel () != null && !e.getSecondaryChannel ().equals ( "" ) )
@@ -195,8 +198,10 @@ public class SonyChannelServiceImpl implements ISonyChannelService {
                         .collect ( Collectors.toList () ) );
 
         // 渠道id:name的map
-        List <SonyChannelCategory> sonyChannelCategoryList = sonyChannelCategoryService.selectSonyChannelCategoryByIds ( channelIds );
-        return sonyChannelCategoryList.stream ().collect ( Collectors.toMap ( e -> e.getId ().toString (), SonyChannelCategory::getChannelName ) );
+        List <SonyChannelCategory> sonyChannelCategoryList =
+                sonyChannelCategoryService.selectSonyChannelCategoryByIds ( channelIds );
+        return sonyChannelCategoryList.stream ()
+                .collect ( Collectors.toMap ( e -> e.getId ().toString (), SonyChannelCategory::getChannelName ) );
     }
 
     @Override

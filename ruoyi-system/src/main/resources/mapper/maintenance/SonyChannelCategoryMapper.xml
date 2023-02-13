@@ -203,6 +203,7 @@
                 and channel_name like concat('%', #{channelName}, '%')
             </if>
         </where>
+        order by create_time
     </select>
 
     <select id="selectSecondaryChannelList" resultType="com.ruoyi.maintenance.domain.vo.SonyChannelCategoryVO">
@@ -212,6 +213,7 @@
             and parent_id = #{parentId}
         </if>
           and deleted_at is null
+        order by create_time
     </select>
 
 
@@ -284,6 +286,7 @@
         </if>
         and a.deleted_at is null
         and b.deleted_at is null
+        order by b.create_time
     </select>
 
     <select id="selectChannelListByParentId" resultType="java.lang.Integer">

@@ -83,7 +83,8 @@ public class SonyChannelCategoryController extends BaseController {
 	public AjaxResult getAllSecondaryChannel(@RequestBody(required = false) Integer id) {
 		SonyChannelCategory sonyChannelCategory = new SonyChannelCategory();
 		sonyChannelCategory.setParentId(id);
-		List<SonyChannelCategoryVO> list = sonyChannelCategoryService.selectSecondaryChannelList(sonyChannelCategory);
+		List<SonyChannelCategoryVO> list =
+				sonyChannelCategoryService.selectSecondaryChannelList(sonyChannelCategory);
 		return success(list);
 	}
 	
@@ -93,7 +94,8 @@ public class SonyChannelCategoryController extends BaseController {
 	@PostMapping("/secondary/list")
 	public TableDataInfo getSecondaryChannel( @RequestBody SonyChannelCategoryDTO dto) {
 		startPage();
-		List<SonyChannelCategoryIndexVO> list = sonyChannelCategoryService.selectChannelCategoryListByChannelCategoryDTO(dto);
+		List<SonyChannelCategoryIndexVO> list =
+				sonyChannelCategoryService.selectChannelCategoryListByChannelCategoryDTO(dto);
 		return getDataTable(list);
 	}
 
